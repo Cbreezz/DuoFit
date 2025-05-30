@@ -17,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar, // Import useSidebar
 } from "@/components/ui/sidebar";
 
 interface NavItem {
@@ -38,6 +39,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {}
 
 export function SidebarNav({ className, ...props }: SidebarNavProps) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar(); // Get mobile state and setter
 
   const isActive = (href: string) => {
     if (href === Routes.home) return pathname === Routes.home || pathname === '/dashboard'; // Handle base dashboard route
@@ -57,6 +59,11 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
               className={isActive(item.href)
                 ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90" 
                 : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}
+              onClick={() => {
+                if (isMobile) {
+                  setOpenMobile(false); // Close mobile sidebar on click
+                }
+              }}
             >
               <a> {/* Link content needs to be wrapped in <a> for passHref + asChild */}
                 <item.icon />
