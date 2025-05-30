@@ -29,7 +29,8 @@ let mockWorkoutPlans: WorkoutPlan[] = [
       { id: 'ex4', name: 'Lunges (alternating legs)', sets: "3", reps: '10-12 per leg' },
       { id: 'ex5', name: 'Plank', sets: "3", reps: '30-60 sec' },
     ],
-    tags: ['full body', 'cardio', 'strength']
+    tags: ['full body', 'cardio', 'strength'],
+    isCustom: false,
   },
   {
     id: 'plan2',
@@ -45,7 +46,8 @@ let mockWorkoutPlans: WorkoutPlan[] = [
       { id: 'ex9', name: 'Overhead Press', sets: "3", reps: '10-12' },
       { id: 'ex10', name: 'Bent-over Rows', sets: "3", reps: '10-12' },
     ],
-    tags: ['strength', 'muscle building', 'compound lifts']
+    tags: ['strength', 'muscle building', 'compound lifts'],
+    isCustom: false,
   },
   {
     id: 'plan3',
@@ -59,7 +61,8 @@ let mockWorkoutPlans: WorkoutPlan[] = [
         { id: 'ex12', name: 'Burpees', sets: "5", reps: '10' },
         { id: 'ex13', name: 'Mountain Climbers', sets: "1", reps: '3 min' },
     ],
-    tags: ['cardio', 'hiit', 'quick workout']
+    tags: ['cardio', 'hiit', 'quick workout'],
+    isCustom: false,
   },
   {
     id: 'plan4',
@@ -75,7 +78,8 @@ let mockWorkoutPlans: WorkoutPlan[] = [
         { id: 'ex17', name: 'Bicep Curls', sets: "3", reps: '12-15' },
         { id: 'ex18', name: 'Tricep Dips / Pushdowns', sets: "3", reps: '12-15' },
     ],
-    tags: ['upper body', 'sculpting', 'gym']
+    tags: ['upper body', 'sculpting', 'gym'],
+    isCustom: false,
   },
 ];
 
@@ -141,15 +145,21 @@ export const api = {
     return simulateApiCall(mockWorkoutPlans.find(p => p.id === planId));
   },
 
-  addWorkoutPlan: async (planData: Omit<WorkoutPlan, 'id' | 'exercises'> & { exercises: Omit<WorkoutExercise, 'id'>[] }): Promise<WorkoutPlan> => {
+  addWorkoutPlan: async (
+    planData: Omit<WorkoutPlan, 'id' | 'exercises'> & { exercises: Omit<WorkoutExercise, 'id'>[] },
+    isCustom: boolean = false,
+    createdByUserId?: string
+  ): Promise<WorkoutPlan> => {
     const newPlan: WorkoutPlan = {
       ...planData,
-      id: `plan-ai-${Date.now()}`,
+      id: `plan-${isCustom ? 'custom' : 'ai'}-${Date.now()}`,
       exercises: planData.exercises.map((ex, index) => ({
         ...ex,
-        id: `ex-ai-${Date.now()}-${index}`,
+        id: `ex-${isCustom ? 'custom' : 'ai'}-${Date.now()}-${index}`,
       })),
-      tags: [...(planData.tags || []), 'ai-generated'],
+      tags: [...(planData.tags || []), ...(isCustom ? ['custom', createdByUserId || 'unknown-user'] : ['ai-generated'])],
+      isCustom,
+      createdByUserId,
     };
     mockWorkoutPlans.push(newPlan);
     return simulateApiCall(newPlan);
@@ -158,10 +168,13 @@ export const api = {
   getTodaysWorkout: async (userId: string): Promise<WorkoutPlan | null> => {
     const userGoal = mockUser.goal;
     if (userGoal) {
-      const plan = mockWorkoutPlans.find(p => p.goal === userGoal);
+      // Prefer non-custom plans for "Today's Workout" unless that's all the user has or a specific logic is added.
+      const plan = mockWorkoutPlans.find(p => p.goal === userGoal && !p.isCustom);
       if (plan) return simulateApiCall(plan);
     }
-    return simulateApiCall(mockWorkoutPlans[0] || null);
+    // Fallback to any first plan if goal-specific not found, or if no goal.
+    const nonCustomPlans = mockWorkoutPlans.filter(p => !p.isCustom);
+    return simulateApiCall(nonCustomPlans[0] || mockWorkoutPlans[0] || null);
   },
 
   markWorkoutAsCompleted: async (userId: string, workoutPlanId: string, date: string): Promise<CompletedWorkout> => {

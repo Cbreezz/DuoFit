@@ -8,7 +8,7 @@ import { WorkoutFilters } from "@/components/workouts/workout-filters";
 import { WorkoutPlanDetailsModal } from "@/components/workouts/workout-plan-details-modal";
 import type { WorkoutPlan, FitnessGoal, WorkoutEquipmentType } from "@/types";
 import { api } from "@/lib/api";
-import { Loader2, Info } from "lucide-react";
+import { Loader2, Info, PlusCircle } from "lucide-react"; // Added PlusCircle
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Routes } from "@/config/routes";
@@ -86,9 +86,20 @@ function WorkoutsContent() {
   };
 
   return (
-    <div className="container mx-auto"> {/* Removed responsive padding here, handled by layout */}
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-2">Discover Workout Plans</h1>
-      <p className="text-muted-foreground mb-6 md:mb-8">Find the perfect plan to match your fitness goals and equipment availability.</p>
+    <div className="container mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Discover Workout Plans</h1>
+          <p className="text-muted-foreground mt-1">Find the perfect plan or create your own.</p>
+        </div>
+        <Button asChild className="mt-4 sm:mt-0">
+          <Link href={Routes.createWorkout}>
+            <PlusCircle className="mr-2 h-4 w-4" /> Create Custom Plan
+          </Link>
+        </Button>
+      </div>
+      <p className="text-muted-foreground mb-6 md:mb-8">Browse existing plans or use filters to narrow down your options.</p>
+
 
       <WorkoutFilters 
         currentGoal={goalFilter}
@@ -107,7 +118,7 @@ function WorkoutsContent() {
           <Info className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold mb-2">No Workout Plans Found</h2>
           <p className="text-muted-foreground mb-4">
-            Try adjusting your filters or check back later for new plans.
+            Try adjusting your filters, check back later, or create your own custom plan!
           </p>
           <Button onClick={handleClearFilters}>Clear Filters and Retry</Button>
         </div>

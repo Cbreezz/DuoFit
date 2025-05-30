@@ -1,5 +1,6 @@
 
 import type { User as FirebaseUser } from "firebase/auth";
+import { z } from "zod"; // Added Zod import
 
 export interface UserProfile {
   id: string;
@@ -13,7 +14,7 @@ export interface UserProfile {
 export interface WorkoutExercise {
   id: string;
   name: string;
-  sets: string; // Changed from number to string
+  sets: string;
   reps: string; // e.g., "8-12" or "15"
   restTime?: string; // e.g., "60s"
 }
@@ -30,6 +31,8 @@ export interface WorkoutPlan {
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
   tags?: string[];
+  isCustom?: boolean; // Added for custom plans
+  createdByUserId?: string; // Added for custom plans
 }
 
 export interface CompletedWorkout {
@@ -75,7 +78,7 @@ export interface GenerateWorkoutInput {
   equipment: AIWorkoutEquipmentPreference;
   muscleFocus: string;
   intensity?: AIWorkoutIntensity;
-  gender?: AIGender; // Added gender
+  gender?: AIGender;
   specificRequests?: string;
 }
 
@@ -104,6 +107,31 @@ export interface AIWorkoutFormValues {
   equipment: AIWorkoutEquipmentPreference;
   muscleFocus: string;
   intensity: AIWorkoutIntensity | "any"; // "any" for optional in form
-  gender: AIGender | "any_gender"; // Added gender, "any_gender" for form's "AI Decides"
+  gender: AIGender | "any_gender";
   specificRequests?: string;
 }
+
+// --- Custom Workout Creation Form Types ---
+export const customExerciseSchema = z.object({
+  name: z.string().min(3, "Exercise name must be at least 3 characters.").max(100),
+  sets: z.string().min(1, "Sets are required.").max(20), // e.g., "3", "3-4", "AMRAP"
+  reps: z.string().min(1, "Reps are required.").max(50), // e.g., "8-12", "15", "30s"
+  restTime: z.string().max(50).optional(), // e.g., "60s", "None"
+});
+
+export const createWorkoutFormSchema = z.object({
+  name: z.string().min(3, "Plan name must be at least 3 characters.").max(100),
+  description: z.string().min(10, "Description must be at least 10 characters.").max(300),
+  goal: z.enum(['lose_weight', 'gain_mass'] as [FitnessGoal, ...FitnessGoal[]], {
+    required_error: "You need to select a fitness goal.",
+  }),
+  type: z.enum(['no_equipment', 'with_equipment'] as [WorkoutEquipmentType, ...WorkoutEquipmentType[]], {
+    required_error: "You need to select an equipment type.",
+  }),
+  duration: z.string().min(3, "Duration is required, e.g., '45 minutes', '1 hour'").max(50),
+  exercises: z.array(customExerciseSchema).min(1, "Add at least one exercise."),
+});
+
+export type CreateWorkoutFormValues = z.infer<typeof createWorkoutFormSchema>;
+export type CustomExerciseFormValues = z.infer<typeof customExerciseSchema>;
+
