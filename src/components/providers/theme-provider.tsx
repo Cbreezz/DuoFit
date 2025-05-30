@@ -31,41 +31,44 @@ export function ThemeProvider({
   defaultTheme = "light",
   storageKey = "duofit-theme",
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const storedTheme = window.localStorage.getItem(storageKey) as Theme | null;
-        if (storedTheme) return storedTheme;
-        // Fallback to system preference if no stored theme
-        // const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        // return prefersDark ? "dark" : defaultTheme; 
-        // For simplicity, DuoFit defaults to light unless a theme is stored. Dark mode is explicit.
-      } catch (e) {
-        // Handle potential localStorage access errors (e.g., in private browsing)
-        console.error("Error reading theme from localStorage", e);
-      }
-    }
-    return defaultTheme;
-  });
+  const [theme, setThemeState] = useState<Theme>(defaultTheme); // Initialize with defaultTheme
 
+  // Effect 1: On client mount, read from localStorage and update theme state if needed.
+  // This runs after initial hydration.
+  useEffect(() => {
+    let effectiveTheme = defaultTheme;
+    try {
+      const storedTheme = window.localStorage.getItem(storageKey) as Theme | null;
+      // Ensure storedTheme is a valid Theme value
+      if (storedTheme && (storedTheme === "light" || storedTheme === "dark")) {
+        effectiveTheme = storedTheme;
+      }
+    } catch (e) {
+      console.error("Error reading theme from localStorage", e);
+      // Fallback to defaultTheme if localStorage access fails
+    }
+    setThemeState(effectiveTheme);
+  }, [defaultTheme, storageKey]); // Dependencies ensure this runs once based on these props
+
+  // Effect 2: Apply theme to HTML and save to localStorage whenever theme state changes.
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
-  }, [theme]);
+    try {
+      window.localStorage.setItem(storageKey, theme);
+    } catch (e) {
+      console.error("Error saving theme to localStorage", e);
+    }
+  }, [theme, storageKey]); // Runs when theme or storageKey changes
 
   const setTheme = useCallback((newTheme: Theme) => {
-    try {
-        window.localStorage.setItem(storageKey, newTheme);
-    } catch (e) {
-        console.error("Error saving theme to localStorage", e);
-    }
     setThemeState(newTheme);
-  }, [storageKey]);
+  }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "light" ? "dark" : "light");
-  }, [theme, setTheme]);
+    setThemeState(currentTheme => (currentTheme === "light" ? "dark" : "light"));
+  }, []);
 
   const value = {
     theme,
