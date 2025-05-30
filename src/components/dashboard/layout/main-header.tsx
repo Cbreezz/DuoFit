@@ -1,63 +1,33 @@
+
 "use client";
 
 import Link from "next/link";
-import { Dumbbell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { UserMenu } from "./user-menu";
-import { SidebarNav } from "./sidebar-nav";
 import { useAuth } from "@/hooks/use-auth";
+import { SidebarTrigger } from "@/components/ui/sidebar"; // Import SidebarTrigger
+import { Routes } from "@/config/routes";
 
 export function MainHeader() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/dashboard" className="mr-6 flex items-center space-x-2">
-            <Dumbbell className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">DuoFit</span>
-          </Link>
-        </div>
-
-        <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] p-0">
-              <div className="flex h-full flex-col">
-                <div className="flex h-16 items-center border-b px-6">
-                  <Link href="/dashboard" className="flex items-center space-x-2">
-                    <Dumbbell className="h-6 w-6 text-primary" />
-                    <span className="font-bold">DuoFit</span>
-                  </Link>
-                </div>
-                <div className="flex-1 overflow-y-auto py-4">
-                   <SidebarNav className="flex-col px-4" />
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-16 items-center px-4 sm:px-6 lg:px-8">
+        {/* SidebarTrigger for mobile and potentially tablet */}
+        <SidebarTrigger className="md:hidden mr-4" /> 
         
-        {/* Mobile centered logo when menu is present */}
-        <div className="flex flex-1 items-center justify-center md:hidden">
-          <Link href="/dashboard" className="flex items-center space-x-2">
-            <Dumbbell className="h-6 w-6 text-primary" />
-            <span className="font-bold">DuoFit</span>
-          </Link>
+        {/* Desktop: Space for breadcrumbs or title if sidebar is not icon-only trigger */}
+        {/* The desktop trigger to expand/collapse an icon sidebar is often part of the sidebar itself (e.g. SidebarRail) or handled by clicking the logo/header in some designs. */}
+        {/* For now, we assume the Sidebar component from ui/sidebar handles its desktop collapsibility if set to 'icon'. */}
+        <div className="flex-1">
+            {/* Optional: Breadcrumbs or page title can go here */}
         </div>
 
-
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex items-center justify-end space-x-4">
           {isLoggedIn ? <UserMenu /> : (
             <Button asChild>
-              <Link href="/login">Login</Link>
+              <Link href={Routes.login}>Login</Link>
             </Button>
           )}
         </div>

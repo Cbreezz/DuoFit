@@ -1,19 +1,23 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Home,
   Dumbbell,
   CalendarDays,
   LineChart,
   Target,
-  Settings, // Example for future
+  // Settings, // Example for future
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Routes } from "@/config/routes";
+import {
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar"; // Import new components
 
 interface NavItem {
   title: string;
@@ -30,38 +34,33 @@ const navItems: NavItem[] = [
   // { title: "Settings", href: Routes.settings, icon: Settings }, // Example
 ];
 
-interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
-  isCollapsed?: boolean; // For icon-only view if sidebar is collapsed
-}
+interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {}
 
-export function SidebarNav({ className, isCollapsed, ...props }: SidebarNavProps) {
+export function SidebarNav({ className, ...props }: SidebarNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav
-      className={cn(
-        "flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1",
-        className
-      )}
-      {...props}
-    >
+    <SidebarMenu className={className} {...props}>
       {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            buttonVariants({ variant: pathname === item.href ? "secondary" : "ghost" }), // "secondary" for active, "ghost" for others
-            "w-full justify-start rounded-md",
-            pathname === item.href
-              ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" // Active styles using primary color
-              : "hover:bg-accent hover:text-accent-foreground", // Hover styles for non-active
-            isCollapsed && "justify-center px-2"
-          )}
-        >
-          <item.icon className={cn("mr-2 h-5 w-5", isCollapsed && "mr-0")} />
-          {!isCollapsed && item.title}
-        </Link>
+        <SidebarMenuItem key={item.href}>
+          <Link href={item.href} passHref legacyBehavior>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === item.href}
+              tooltip={item.title}
+              variant={pathname === item.href ? "default" : "ghost"} // Use default for active, ghost for others
+              className={pathname === item.href 
+                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90" 
+                : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}
+            >
+              <a> {/* Link content needs to be wrapped in <a> for passHref + asChild */}
+                <item.icon />
+                <span>{item.title}</span>
+              </a>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
       ))}
-    </nav>
+    </SidebarMenu>
   );
 }

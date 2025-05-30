@@ -1,13 +1,21 @@
+
 "use client";
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Routes } from '@/config/routes';
 import { MainHeader } from '@/components/dashboard/layout/main-header';
 import { SidebarNav } from '@/components/dashboard/layout/sidebar-nav';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Dumbbell } from 'lucide-react';
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarHeader, 
+  SidebarContent, 
+  SidebarInset 
+} from '@/components/ui/sidebar'; // Assuming this is the correct path
 
 export default function DashboardLayout({
   children,
@@ -32,18 +40,27 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <MainHeader />
-      <div className="container mx-auto flex flex-1 py-6">
-        <aside className="hidden w-64 flex-col md:flex">
-          <ScrollArea className="h-full py-6 pr-6 lg:py-8">
+    <SidebarProvider>
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <Sidebar collapsible="icon" className="border-r bg-sidebar text-sidebar-foreground">
+          <SidebarHeader className="p-2 flex items-center justify-center md:justify-start">
+            <Link href={Routes.home} className="flex items-center gap-2 p-2 font-semibold">
+              <Dumbbell className="h-7 w-7 text-primary" />
+              <span className="text-lg group-data-[state=collapsed]/sidebar:hidden">DuoFit</span>
+            </Link>
+          </SidebarHeader>
+          <SidebarContent>
             <SidebarNav />
-          </ScrollArea>
-        </aside>
-        <main className="flex-1 lg:max-w-[calc(100%-16rem-1.5rem)]"> {/* 16rem for sidebar, 1.5rem for pr */}
-          {children}
-        </main>
+          </SidebarContent>
+          {/* Optional: <SidebarFooter>...</SidebarFooter> */}
+        </Sidebar>
+        <SidebarInset className="flex-1 flex flex-col overflow-hidden">
+          <MainHeader />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-background">
+            {children}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
