@@ -103,8 +103,8 @@ export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelecti
   return (
     <Card className="w-full max-w-lg mx-auto shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader className="text-center">
-        <Target className="mx-auto h-12 w-12 text-primary mb-2" />
-        <CardTitle className="text-2xl">Your Fitness Profile</CardTitle>
+        <Target className="mx-auto h-10 w-10 md:h-12 md:w-12 text-primary mb-2" />
+        <CardTitle className="text-xl md:text-2xl">Your Fitness Profile</CardTitle>
         <CardDescription>
           Select your primary goal and enter your height for BMI calculation.
         </CardDescription>
@@ -117,26 +117,26 @@ export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelecti
               name="goal"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel className="text-lg font-semibold text-center block">Fitness Goal</FormLabel>
+                  <FormLabel className="text-base md:text-lg font-semibold text-center block">Fitness Goal</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
                       value={field.value}
                       className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 items-center justify-center"
                     >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormItem className="flex items-center space-x-3 space-y-0 w-full md:w-auto">
                         <FormControl>
                           <RadioGroupItem value="lose_weight" id="lose_weight" />
                         </FormControl>
-                        <FormLabel htmlFor="lose_weight" className="font-semibold text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
+                        <FormLabel htmlFor="lose_weight" className="font-semibold text-sm md:text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
                           Lose Weight
                         </FormLabel>
                       </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormItem className="flex items-center space-x-3 space-y-0 w-full md:w-auto">
                         <FormControl>
                           <RadioGroupItem value="gain_mass" id="gain_mass" />
                         </FormControl>
-                        <FormLabel htmlFor="gain_mass" className="font-semibold text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
+                        <FormLabel htmlFor="gain_mass" className="font-semibold text-sm md:text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
                           Gain Mass
                         </FormLabel>
                       </FormItem>
@@ -152,7 +152,7 @@ export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelecti
               name="heightM"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="heightM" className="text-lg font-semibold flex items-center">
+                  <FormLabel htmlFor="heightM" className="text-base md:text-lg font-semibold flex items-center">
                     <Ruler className="mr-2 h-5 w-5 text-primary" /> Height (meters)
                   </FormLabel>
                   <FormControl>
@@ -184,4 +184,3 @@ export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelecti
     </Card>
   );
 }
-

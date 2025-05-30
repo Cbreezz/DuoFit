@@ -81,29 +81,29 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange }: WorkoutP
       if (!open) setCheckedExercises({}); // Reset checkboxes when modal is closed
     }}>
       <DialogContent className="sm:max-w-[90vw] md:max-w-[70vw] lg:max-w-[600px] p-0 max-h-[90vh] flex flex-col">
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl md:text-3xl font-bold">{plan.name}</DialogTitle>
-          <DialogDescription className="text-base">{plan.description}</DialogDescription>
+        <DialogHeader className="p-4 md:p-6 pb-0">
+          <DialogTitle className="text-xl md:text-2xl lg:text-3xl font-bold">{plan.name}</DialogTitle>
+          <DialogDescription className="text-sm md:text-base">{plan.description}</DialogDescription>
            <div className="flex flex-wrap gap-2 pt-2">
-                <Badge variant="secondary" className="capitalize text-sm py-1 px-2">
+                <Badge variant="secondary" className="capitalize text-xs md:text-sm py-1 px-2">
                     {plan.goal.replace('_', ' ')}
                 </Badge>
-                <Badge variant="outline" className="capitalize text-sm py-1 px-2">
+                <Badge variant="outline" className="capitalize text-xs md:text-sm py-1 px-2">
                     {plan.type === 'no_equipment' ? 
-                        <Zap className="mr-1.5 h-4 w-4" /> : 
-                        <Dumbbell className="mr-1.5 h-4 w-4" /> }
+                        <Zap className="mr-1.5 h-3 w-3 md:h-4 md:w-4" /> : 
+                        <Dumbbell className="mr-1.5 h-3 w-3 md:h-4 md:w-4" /> }
                     {plan.type.replace('_', ' ')}
                 </Badge>
-                <Badge variant="outline" className="text-sm py-1 px-2">
-                    <Clock className="mr-1.5 h-4 w-4" />
+                <Badge variant="outline" className="text-xs md:text-sm py-1 px-2">
+                    <Clock className="mr-1.5 h-3 w-3 md:h-4 md:w-4" />
                     {plan.duration}
                 </Badge>
             </div>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow overflow-y-auto px-6">
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-3 flex items-center"><ListChecks className="mr-2 h-5 w-5 text-primary" />Exercises</h3>
+        <ScrollArea className="flex-grow overflow-y-auto px-4 md:px-6">
+          <div className="mt-4 md:mt-6">
+            <h3 className="text-lg md:text-xl font-semibold mb-3 flex items-center"><ListChecks className="mr-2 h-5 w-5 text-primary" />Exercises</h3>
             <ul className="space-y-3">
               {plan.exercises.map((exercise) => (
                 <li key={exercise.id} className="p-3 border rounded-lg bg-card hover:shadow-sm transition-shadow flex items-center space-x-3">
@@ -114,8 +114,8 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange }: WorkoutP
                     aria-labelledby={`exercise-label-${exercise.id}`}
                   />
                   <Label htmlFor={`exercise-${exercise.id}`} id={`exercise-label-${exercise.id}`} className="flex-grow cursor-pointer">
-                    <h4 className="font-semibold text-md">{exercise.name}</h4>
-                    <div className="text-sm text-muted-foreground mt-0.5 space-x-3">
+                    <h4 className="font-semibold text-sm md:text-md">{exercise.name}</h4>
+                    <div className="text-xs md:text-sm text-muted-foreground mt-0.5 space-x-3">
                       <span>Sets: {exercise.sets}</span>
                       <span>Reps: {exercise.reps}</span>
                       {exercise.restTime && <span>Rest: {exercise.restTime}</span>}
@@ -127,11 +127,11 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange }: WorkoutP
           </div>
         </ScrollArea>
 
-        <DialogFooter className="p-6 pt-4 border-t">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="p-4 md:p-6 pt-4 border-t flex-col sm:flex-row gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
                 Close
             </Button>
-            <Button onClick={handleLogCheckedExercises}>
+            <Button onClick={handleLogCheckedExercises} className="w-full sm:w-auto">
                 <CheckSquare className="mr-2 h-4 w-4" />
                 Log Checked Exercises
             </Button>

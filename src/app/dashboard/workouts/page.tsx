@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useCallback, Suspense } from "react";
@@ -85,9 +86,9 @@ function WorkoutsContent() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Discover Workout Plans</h1>
-      <p className="text-muted-foreground mb-8">Find the perfect plan to match your fitness goals and equipment availability.</p>
+    <div className="container mx-auto"> {/* Removed responsive padding here, handled by layout */}
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-2">Discover Workout Plans</h1>
+      <p className="text-muted-foreground mb-6 md:mb-8">Find the perfect plan to match your fitness goals and equipment availability.</p>
 
       <WorkoutFilters 
         currentGoal={goalFilter}
@@ -111,7 +112,7 @@ function WorkoutsContent() {
           <Button onClick={handleClearFilters}>Clear Filters and Retry</Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {workoutPlans.map((plan) => (
             <WorkoutPlanCard key={plan.id} plan={plan} />
           ))}

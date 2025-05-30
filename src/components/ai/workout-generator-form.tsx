@@ -80,7 +80,7 @@ export function WorkoutGeneratorForm() {
     <div className="space-y-8">
       <Card className="shadow-lg animate-in fade-in-50 duration-500">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
+          <CardTitle className="flex items-center text-xl md:text-2xl">
             <Wand2 className="mr-2 h-7 w-7 text-primary" />
             AI Workout Generator
           </CardTitle>
@@ -238,7 +238,7 @@ export function WorkoutGeneratorForm() {
       {error && (
         <Card className="border-destructive bg-destructive/10 shadow-md animate-in fade-in-50 duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center text-destructive">
+            <CardTitle className="flex items-center text-destructive text-xl md:text-2xl">
               <AlertTriangle className="mr-2 h-5 w-5" />
               Generation Failed
             </CardTitle>
@@ -255,9 +255,9 @@ export function WorkoutGeneratorForm() {
       {generatedPlan && !isLoading && (
         <Card className="shadow-lg mt-8 animate-in fade-in-50 duration-500">
           <CardHeader>
-            <CardTitle className="text-2xl md:text-3xl">{generatedPlan.name}</CardTitle>
+            <CardTitle className="text-xl md:text-2xl lg:text-3xl">{generatedPlan.name}</CardTitle>
             <CardDescription>{generatedPlan.description}</CardDescription>
-            <div className="text-sm text-muted-foreground pt-2 space-x-4">
+            <div className="text-sm text-muted-foreground pt-2 space-x-2 sm:space-x-4 flex flex-wrap gap-y-1">
                 <span><strong>Goal:</strong> <span className="capitalize">{generatedPlan.goal.replace('_', ' ')}</span></span>
                 <span><strong>Equipment:</strong> <span className="capitalize">{generatedPlan.equipmentUsed.replace(/_/g, ' ')}</span></span>
                 <span><strong>Focus:</strong> {generatedPlan.muscleFocus}</span>
@@ -265,21 +265,22 @@ export function WorkoutGeneratorForm() {
             </div>
           </CardHeader>
           <CardContent>
-            <h3 className="text-xl font-semibold mb-3 mt-4">Exercises:</h3>
+            <h3 className="text-lg md:text-xl font-semibold mb-3 mt-4">Exercises:</h3>
             <ul className="space-y-4">
               {generatedPlan.exercises.map((ex, index) => (
-                <li key={index} className="p-4 border rounded-lg bg-background/50">
-                  <h4 className="font-semibold text-lg">{ex.name}</h4>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    <span>Sets: {ex.sets}</span> | <span>Reps: {ex.reps}</span>
-                    {ex.restTime && <span> | Rest: {ex.restTime}</span>}
+                <li key={index} className="p-3 md:p-4 border rounded-lg bg-background/50">
+                  <h4 className="font-semibold text-md md:text-lg">{ex.name}</h4>
+                  <div className="text-sm text-muted-foreground mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                    <span>Sets: {ex.sets}</span>
+                    <span>Reps: {ex.reps}</span>
+                    {ex.restTime && <span>Rest: {ex.restTime}</span>}
                   </div>
                 </li>
               ))}
             </ul>
             {generatedPlan.notes && (
               <>
-                <h3 className="text-xl font-semibold mb-2 mt-6">Coach's Notes:</h3>
+                <h3 className="text-lg md:text-xl font-semibold mb-2 mt-6">Coach's Notes:</h3>
                 <p className="text-muted-foreground whitespace-pre-line">{generatedPlan.notes}</p>
               </>
             )}
@@ -294,4 +295,3 @@ export function WorkoutGeneratorForm() {
     </div>
   );
 }
-

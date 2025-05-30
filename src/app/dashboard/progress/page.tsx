@@ -52,15 +52,15 @@ export default function ProgressPage() {
   };
   
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8 text-center">Track Your Progress</h1>
+    <div className="container mx-auto"> {/* Removed responsive padding here, handled by layout */}
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-6 md:mb-8 text-center">Track Your Progress</h1>
       
       {authLoading || isLoadingData ? (
          <div className="flex items-center justify-center py-10">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           <div className="lg:col-span-2">
             <WeightBmiChart data={weightLogs} isLoading={isLoadingData} />
           </div>
@@ -75,4 +75,3 @@ export default function ProgressPage() {
     </div>
   );
 }
-

@@ -50,7 +50,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
     return (
       <Card className="w-full shadow-lg">
         <CardHeader>
-          <CardTitle>Today&apos;s Workout</CardTitle>
+          <CardTitle className="text-xl md:text-2xl">Today&apos;s Workout</CardTitle>
           <CardDescription>Loading your recommended workout...</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center p-10">
@@ -64,7 +64,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
     return (
        <Card className="w-full shadow-lg animate-in fade-in-50 duration-500">
         <CardHeader>
-          <CardTitle>Today&apos;s Workout</CardTitle>
+          <CardTitle className="text-xl md:text-2xl">Today&apos;s Workout</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <Info className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -80,7 +80,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
   return (
     <Card className="w-full overflow-hidden shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader>
-        <CardTitle className="text-2xl">{workout.name}</CardTitle>
+        <CardTitle className="text-xl md:text-2xl">{workout.name}</CardTitle>
         <CardDescription>{workout.description}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -90,7 +90,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
           <p><strong>Duration:</strong> {workout.duration}</p>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between gap-2">
+      <CardFooter className="flex flex-col sm:flex-row justify-between gap-2 pt-4">
         <Button variant="outline" asChild className="w-full sm:w-auto">
           <Link href={`${Routes.workouts}?planId=${workout.id}`}>View Details</Link>
         </Button>
@@ -106,4 +106,3 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
     </Card>
   );
 }
-

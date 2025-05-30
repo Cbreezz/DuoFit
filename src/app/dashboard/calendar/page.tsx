@@ -1,3 +1,4 @@
+
 "use client";
 
 import { CompletedWorkoutsCalendar } from "@/components/calendar/completed-workouts-calendar";
@@ -38,9 +39,9 @@ export default function CalendarPage() {
   }, [authLoading, fetchData]);
   
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8 text-center">Workout Calendar</h1>
-      <p className="text-muted-foreground mb-8 text-center">
+    <div className="container mx-auto"> {/* Removed responsive padding here, handled by layout */}
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-6 md:mb-8 text-center">Workout Calendar</h1>
+      <p className="text-muted-foreground mb-6 md:mb-8 text-center">
         View your completed workouts. Days with completed workouts are highlighted.
       </p>
       <CompletedWorkoutsCalendar 

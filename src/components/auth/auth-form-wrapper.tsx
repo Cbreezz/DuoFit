@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dumbbell } from 'lucide-react';
@@ -17,15 +18,15 @@ export function AuthFormWrapper({ title, description, children, showLogo = true 
           <CardHeader className="items-center text-center">
             <div className="mb-4 flex items-center justify-center space-x-2 text-primary">
               <Dumbbell className="h-10 w-10" />
-              <h1 className="text-4xl font-bold">DuoFit</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">DuoFit</h1>
             </div>
-            <CardTitle className="text-2xl">{title}</CardTitle>
+            <CardTitle className="text-xl md:text-2xl">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </CardHeader>
         )}
         {!showLogo && (
              <CardHeader>
-                <CardTitle className="text-2xl">{title}</CardTitle>
+                <CardTitle className="text-xl md:text-2xl">{title}</CardTitle>
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
         )}

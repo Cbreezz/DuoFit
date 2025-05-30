@@ -1,3 +1,4 @@
+
 "use client";
 
 import { TodaysWorkoutCard } from "@/components/dashboard/todays-workout-card";
@@ -48,27 +49,27 @@ export default function DashboardPage() {
   }
   
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
+    <div className="container mx-auto"> {/* Removed responsive padding here, handled by layout */}
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome, {user?.displayName || 'User'}!</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Welcome, {user?.displayName || 'User'}!</h1>
         
         <section>
           <TodaysWorkoutCard workout={todaysWorkout} isLoading={isLoading} onWorkoutCompleted={handleWorkoutCompleted} />
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-4">Your Progress At a Glance</h2>
+          <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-4">Your Progress At a Glance</h2>
           <QuickStats weightLogs={weightLogs} completedWorkouts={completedWorkouts} isLoading={isLoading} />
         </section>
 
         <section>
            <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle>Fitness Journey Tools</CardTitle>
+              <CardTitle className="text-lg md:text-xl">Fitness Journey Tools</CardTitle>
               <CardDescription>Explore more features to help you achieve your goals.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-              <Button variant="outline" asChild><Link href={Routes.goal}>Set/Update Goal</Link></Button>
+            <CardContent className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              <Button variant="outline" asChild><Link href={Routes.goal}>Set/Update Profile</Link></Button>
               <Button variant="outline" asChild><Link href={Routes.workouts}>Browse Workouts</Link></Button>
               <Button variant="outline" asChild><Link href={Routes.calendar}>View Calendar</Link></Button>
               <Button variant="outline" asChild><Link href={Routes.progress}>Track Progress</Link></Button>

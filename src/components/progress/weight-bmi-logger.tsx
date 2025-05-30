@@ -95,7 +95,7 @@ export function WeightBmiLogger({ onLogAdded, userHeightM }: WeightBmiLoggerProp
   return (
     <Card className="w-full max-w-lg mx-auto shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader>
-        <CardTitle className="text-2xl">Log Your Progress</CardTitle>
+        <CardTitle className="text-xl md:text-2xl">Log Your Progress</CardTitle>
         <CardDescription>
           Keep track of your weight. Consistent logging helps visualize your journey.
         </CardDescription>
@@ -194,4 +194,3 @@ export function WeightBmiLogger({ onLogAdded, userHeightM }: WeightBmiLoggerProp
     </Card>
   );
 }
-
