@@ -4,6 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useState } from "react"; // Added import
 import { Button } from "@/components/ui/button";
 import {
   Form,
