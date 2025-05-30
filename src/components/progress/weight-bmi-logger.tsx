@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -92,7 +93,7 @@ export function WeightBmiLogger({ onLogAdded, userHeightM }: WeightBmiLoggerProp
   }
 
   return (
-    <Card className="w-full max-w-lg mx-auto shadow-xl">
+    <Card className="w-full max-w-lg mx-auto shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader>
         <CardTitle className="text-2xl">Log Your Progress</CardTitle>
         <CardDescription>
@@ -193,3 +194,4 @@ export function WeightBmiLogger({ onLogAdded, userHeightM }: WeightBmiLoggerProp
     </Card>
   );
 }
+

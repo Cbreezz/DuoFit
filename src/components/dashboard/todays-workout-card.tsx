@@ -62,7 +62,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
 
   if (!workout) {
     return (
-       <Card className="w-full shadow-lg">
+       <Card className="w-full shadow-lg animate-in fade-in-50 duration-500">
         <CardHeader>
           <CardTitle>Today&apos;s Workout</CardTitle>
         </CardHeader>
@@ -78,7 +78,7 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
   }
 
   return (
-    <Card className="w-full overflow-hidden shadow-lg">
+    <Card className="w-full overflow-hidden shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader>
         <CardTitle className="text-2xl">{workout.name}</CardTitle>
         <CardDescription>{workout.description}</CardDescription>
@@ -106,3 +106,4 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
     </Card>
   );
 }
+

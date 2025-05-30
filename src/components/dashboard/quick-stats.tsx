@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,7 @@ interface StatCardProps {
 
 function StatCard({ title, value, icon: Icon, unit, trend }: StatCardProps) {
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-md animate-in fade-in-50 duration-500">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className="h-5 w-5 text-muted-foreground" />
@@ -76,3 +77,4 @@ export function QuickStats({ weightLogs, completedWorkouts, isLoading }: QuickSt
     </div>
   );
 }
+

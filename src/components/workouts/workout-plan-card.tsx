@@ -13,7 +13,7 @@ interface WorkoutPlanCardProps {
 
 export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full">
+    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full animate-in fade-in-0 zoom-in-95 duration-300 ease-out">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl mb-1">{plan.name}</CardTitle>
         <CardDescription className="line-clamp-2 h-[2.5em]">{plan.description}</CardDescription>
@@ -43,3 +43,4 @@ export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
     </Card>
   );
 }
+

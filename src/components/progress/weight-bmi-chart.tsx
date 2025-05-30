@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { WeightLog } from "@/types";
@@ -39,7 +40,7 @@ export function WeightBmiChart({ data, isLoading }: WeightBmiChartProps) {
 
   if (isLoading) {
     return (
-        <Card className="shadow-md">
+        <Card className="shadow-lg">
             <CardHeader>
                 <div className="h-6 bg-muted rounded w-1/2 animate-pulse mb-1"></div>
                 <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
@@ -53,7 +54,7 @@ export function WeightBmiChart({ data, isLoading }: WeightBmiChartProps) {
 
   if (data.length < 2 && !isLoading) {
      return (
-        <Card className="shadow-md">
+        <Card className="shadow-lg animate-in fade-in-50 duration-500">
             <CardHeader>
                 <CardTitle>Weight & BMI Trend</CardTitle>
                 <CardDescription>Log at least two entries to see your progress chart.</CardDescription>
@@ -67,7 +68,7 @@ export function WeightBmiChart({ data, isLoading }: WeightBmiChartProps) {
   }
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg animate-in fade-in-50 duration-500">
         <CardHeader>
             <CardTitle className="flex items-center"><Scale className="mr-2 h-6 w-6 text-primary"/>Weight & BMI Trend</CardTitle>
             <CardDescription>Track your weight and BMI changes over time.</CardDescription>
@@ -132,3 +133,4 @@ export function WeightBmiChart({ data, isLoading }: WeightBmiChartProps) {
     </Card>
   );
 }
+

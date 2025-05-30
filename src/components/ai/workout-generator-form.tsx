@@ -78,7 +78,7 @@ export function WorkoutGeneratorForm() {
 
   return (
     <div className="space-y-8">
-      <Card className="shadow-xl">
+      <Card className="shadow-lg animate-in fade-in-50 duration-500">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Wand2 className="mr-2 h-7 w-7 text-primary" />
@@ -236,7 +236,7 @@ export function WorkoutGeneratorForm() {
       )}
 
       {error && (
-        <Card className="border-destructive bg-destructive/10 shadow-md">
+        <Card className="border-destructive bg-destructive/10 shadow-md animate-in fade-in-50 duration-300">
           <CardHeader>
             <CardTitle className="flex items-center text-destructive">
               <AlertTriangle className="mr-2 h-5 w-5" />
@@ -253,7 +253,7 @@ export function WorkoutGeneratorForm() {
       )}
 
       {generatedPlan && !isLoading && (
-        <Card className="shadow-xl mt-8 animate-in fade-in-50">
+        <Card className="shadow-lg mt-8 animate-in fade-in-50 duration-500">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl">{generatedPlan.name}</CardTitle>
             <CardDescription>{generatedPlan.description}</CardDescription>

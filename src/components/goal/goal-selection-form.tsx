@@ -101,7 +101,7 @@ export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelecti
   }
 
   return (
-    <Card className="w-full max-w-lg mx-auto shadow-xl">
+    <Card className="w-full max-w-lg mx-auto shadow-lg animate-in fade-in-50 duration-500">
       <CardHeader className="text-center">
         <Target className="mx-auto h-12 w-12 text-primary mb-2" />
         <CardTitle className="text-2xl">Your Fitness Profile</CardTitle>
