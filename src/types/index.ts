@@ -1,3 +1,4 @@
+
 import type { User as FirebaseUser } from "firebase/auth";
 
 export interface UserProfile {
@@ -27,7 +28,7 @@ export interface WorkoutPlan {
   type: WorkoutEquipmentType;
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
-  imageUrl?: string;
+  imageUrl?: string; // Made optional
   tags?: string[];
 }
 

@@ -1,3 +1,4 @@
+
 import type { WorkoutPlan, FitnessGoal, WeightLog, CompletedWorkout, BackendUser, WorkoutEquipmentType } from '@/types';
 
 // MOCK API - Replace with actual fetch calls to your backend
@@ -20,7 +21,6 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     goal: 'lose_weight',
     type: 'no_equipment',
     duration: '45 minutes',
-    imageUrl: 'https://placehold.co/600x400.png',
     exercises: [
       { id: 'ex1', name: 'Jumping Jacks', sets: 3, reps: '30-45 sec' },
       { id: 'ex2', name: 'Bodyweight Squats', sets: 3, reps: '15-20' },
@@ -37,7 +37,6 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     goal: 'gain_mass',
     type: 'with_equipment',
     duration: '60 minutes',
-    imageUrl: 'https://placehold.co/600x400.png',
     exercises: [
       { id: 'ex6', name: 'Barbell Squats', sets: 4, reps: '8-10' },
       { id: 'ex7', name: 'Bench Press', sets: 4, reps: '8-10' },
@@ -54,7 +53,6 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     goal: 'lose_weight',
     type: 'no_equipment',
     duration: '20 minutes',
-    imageUrl: 'https://placehold.co/600x400.png',
     exercises: [
         { id: 'ex11', name: 'High Knees', sets: 1, reps: '3 min' },
         { id: 'ex12', name: 'Burpees', sets: 5, reps: '10' },
@@ -69,7 +67,6 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     goal: 'gain_mass',
     type: 'with_equipment',
     duration: '50 minutes',
-    imageUrl: 'https://placehold.co/600x400.png',
     exercises: [
         { id: 'ex14', name: 'Pull-ups / Lat Pulldowns', sets: 3, reps: 'AMRAP / 10-12' },
         { id: 'ex15', name: 'Dumbbell Bench Press', sets: 3, reps: '10-12' },
@@ -98,12 +95,9 @@ const simulateApiCall = <T>(data: T): Promise<T> => {
 
 export const api = {
   getUserProfile: async (firebaseUid: string): Promise<BackendUser | null> => {
-    // In a real app, this would fetch from your backend based on firebaseUid
-    // If user doesn't exist in backend, you might create them here or handle it.
     if (mockUser.firebaseUid === firebaseUid) {
       return simulateApiCall(mockUser);
     }
-    // Simulate creating a new user if not found for demo purposes
     const newUser: BackendUser = {
       id: `backend-${firebaseUid.substring(0,5)}`,
       firebaseUid,
@@ -111,7 +105,7 @@ export const api = {
       name: `User ${firebaseUid.substring(0,5)}`,
       goal: null
     };
-    mockUser = newUser; // For subsequent calls in this mock
+    mockUser = newUser; 
     return simulateApiCall(newUser);
   },
 
@@ -136,8 +130,6 @@ export const api = {
   },
 
   getTodaysWorkout: async (userId: string): Promise<WorkoutPlan | null> => {
-    // Simple mock: return the first plan matching user's goal, or first overall
-    // A real app would have more complex logic (e.g., based on schedule)
     const userGoal = mockUser.goal;
     if (userGoal) {
       const plan = mockWorkoutPlans.find(p => p.goal === userGoal);
@@ -174,7 +166,6 @@ export const api = {
       bmi,
     };
     mockWeightLogs.push(newLog);
-    // Keep logs sorted by date for charts
     mockWeightLogs.sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     return simulateApiCall(newLog);
   },
@@ -183,18 +174,3 @@ export const api = {
     return simulateApiCall(mockWeightLogs.filter(wl => wl.userId === userId).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   },
 };
-
-// Add data-ai-hint to mock image URLs
-mockWorkoutPlans.forEach(plan => {
-  if (plan.imageUrl === 'https://placehold.co/600x400.png') {
-    if (plan.type === 'no_equipment') {
-      plan.imageUrl = 'https://placehold.co/600x400.png?text=Home+Workout'
-      // @ts-ignore
-      plan['data-ai-hint'] = 'home fitness';
-    } else {
-      plan.imageUrl = 'https://placehold.co/600x400.png?text=Gym+Workout'
-      // @ts-ignore
-      plan['data-ai-hint'] = 'gym equipment';
-    }
-  }
-});

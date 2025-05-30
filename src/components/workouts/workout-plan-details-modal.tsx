@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -6,14 +7,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { WorkoutPlan } from "@/types";
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Dumbbell, Zap, Repeat, ShieldQuestion, ListChecks, X } from "lucide-react";
+import { Clock, Dumbbell, Zap, ListChecks, X } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface WorkoutPlanDetailsModalProps {
@@ -29,19 +28,6 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange }: WorkoutP
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[90vw] md:max-w-[70vw] lg:max-w-[600px] p-0 max-h-[90vh] flex flex-col">
         <DialogHeader className="p-6 pb-0">
-          {plan.imageUrl && (
-            <div className="relative h-60 w-full mb-4 rounded-t-lg overflow-hidden">
-              <Image
-                // @ts-ignore
-                src={plan.imageUrl || `https://placehold.co/600x400.png?text=${encodeURIComponent(plan.name)}`}
-                alt={plan.name}
-                layout="fill"
-                objectFit="cover"
-                // @ts-ignore
-                data-ai-hint={plan['data-ai-hint'] || 'fitness exercise'}
-              />
-            </div>
-          )}
           <DialogTitle className="text-2xl md:text-3xl font-bold">{plan.name}</DialogTitle>
           <DialogDescription className="text-base">{plan.description}</DialogDescription>
            <div className="flex flex-wrap gap-2 pt-2">

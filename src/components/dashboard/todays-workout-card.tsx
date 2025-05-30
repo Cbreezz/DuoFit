@@ -1,10 +1,10 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { WorkoutPlan } from "@/types";
 import { CheckCircle2, Loader2, Info } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Routes } from "@/config/routes";
 import { useToast } from "@/hooks/use-toast";
@@ -79,19 +79,6 @@ export function TodaysWorkoutCard({ workout, isLoading, onWorkoutCompleted }: To
 
   return (
     <Card className="w-full overflow-hidden shadow-lg">
-      {workout.imageUrl && (
-        <div className="relative h-48 w-full">
-          <Image
-            // @ts-ignore
-            src={workout.imageUrl || `https://placehold.co/600x400.png?text=${encodeURIComponent(workout.name)}`}
-            alt={workout.name}
-            layout="fill"
-            objectFit="cover"
-            // @ts-ignore
-            data-ai-hint={workout['data-ai-hint'] || 'fitness workout'}
-          />
-        </div>
-      )}
       <CardHeader>
         <CardTitle className="text-2xl">{workout.name}</CardTitle>
         <CardDescription>{workout.description}</CardDescription>
