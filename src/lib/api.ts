@@ -1,5 +1,5 @@
 
-import type { WorkoutPlan, FitnessGoal, WeightLog, CompletedWorkout, BackendUser, WorkoutEquipmentType } from '@/types';
+import type { WorkoutPlan, FitnessGoal, WeightLog, CompletedWorkout, BackendUser, WorkoutEquipmentType, AIGeneratedWorkoutPlan, WorkoutExercise } from '@/types';
 
 // MOCK API - Replace with actual fetch calls to your backend
 
@@ -23,11 +23,11 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     type: 'no_equipment',
     duration: '45 minutes',
     exercises: [
-      { id: 'ex1', name: 'Jumping Jacks', sets: 3, reps: '30-45 sec' },
-      { id: 'ex2', name: 'Bodyweight Squats', sets: 3, reps: '15-20' },
-      { id: 'ex3', name: 'Push-ups (or Knee Push-ups)', sets: 3, reps: 'As many as possible (AMRAP)' },
-      { id: 'ex4', name: 'Lunges (alternating legs)', sets: 3, reps: '10-12 per leg' },
-      { id: 'ex5', name: 'Plank', sets: 3, reps: '30-60 sec' },
+      { id: 'ex1', name: 'Jumping Jacks', sets: "3", reps: '30-45 sec' },
+      { id: 'ex2', name: 'Bodyweight Squats', sets: "3", reps: '15-20' },
+      { id: 'ex3', name: 'Push-ups (or Knee Push-ups)', sets: "3", reps: 'As many as possible (AMRAP)' },
+      { id: 'ex4', name: 'Lunges (alternating legs)', sets: "3", reps: '10-12 per leg' },
+      { id: 'ex5', name: 'Plank', sets: "3", reps: '30-60 sec' },
     ],
     tags: ['full body', 'cardio', 'strength']
   },
@@ -39,11 +39,11 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     type: 'with_equipment',
     duration: '60 minutes',
     exercises: [
-      { id: 'ex6', name: 'Barbell Squats', sets: 4, reps: '8-10' },
-      { id: 'ex7', name: 'Bench Press', sets: 4, reps: '8-10' },
-      { id: 'ex8', name: 'Deadlifts', sets: 1, reps: '5' }, // Or 3 sets of 5-8 reps
-      { id: 'ex9', name: 'Overhead Press', sets: 3, reps: '10-12' },
-      { id: 'ex10', name: 'Bent-over Rows', sets: 3, reps: '10-12' },
+      { id: 'ex6', name: 'Barbell Squats', sets: "4", reps: '8-10' },
+      { id: 'ex7', name: 'Bench Press', sets: "4", reps: '8-10' },
+      { id: 'ex8', name: 'Deadlifts', sets: "1", reps: '5' }, // Or 3 sets of 5-8 reps
+      { id: 'ex9', name: 'Overhead Press', sets: "3", reps: '10-12' },
+      { id: 'ex10', name: 'Bent-over Rows', sets: "3", reps: '10-12' },
     ],
     tags: ['strength', 'muscle building', 'compound lifts']
   },
@@ -55,9 +55,9 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     type: 'no_equipment',
     duration: '20 minutes',
     exercises: [
-        { id: 'ex11', name: 'High Knees', sets: 1, reps: '3 min' },
-        { id: 'ex12', name: 'Burpees', sets: 5, reps: '10' },
-        { id: 'ex13', name: 'Mountain Climbers', sets: 1, reps: '3 min' },
+        { id: 'ex11', name: 'High Knees', sets: "1", reps: '3 min' },
+        { id: 'ex12', name: 'Burpees', sets: "5", reps: '10' },
+        { id: 'ex13', name: 'Mountain Climbers', sets: "1", reps: '3 min' },
     ],
     tags: ['cardio', 'hiit', 'quick workout']
   },
@@ -69,11 +69,11 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     type: 'with_equipment',
     duration: '50 minutes',
     exercises: [
-        { id: 'ex14', name: 'Pull-ups / Lat Pulldowns', sets: 3, reps: 'AMRAP / 10-12' },
-        { id: 'ex15', name: 'Dumbbell Bench Press', sets: 3, reps: '10-12' },
-        { id: 'ex16', name: 'Dumbbell Shoulder Press', sets: 3, reps: '10-12' },
-        { id: 'ex17', name: 'Bicep Curls', sets: 3, reps: '12-15' },
-        { id: 'ex18', name: 'Tricep Dips / Pushdowns', sets: 3, reps: '12-15' },
+        { id: 'ex14', name: 'Pull-ups / Lat Pulldowns', sets: "3", reps: 'AMRAP / 10-12' },
+        { id: 'ex15', name: 'Dumbbell Bench Press', sets: "3", reps: '10-12' },
+        { id: 'ex16', name: 'Dumbbell Shoulder Press', sets: "3", reps: '10-12' },
+        { id: 'ex17', name: 'Bicep Curls', sets: "3", reps: '12-15' },
+        { id: 'ex18', name: 'Tricep Dips / Pushdowns', sets: "3", reps: '12-15' },
     ],
     tags: ['upper body', 'sculpting', 'gym']
   },
@@ -107,7 +107,7 @@ export const api = {
       email: `user-${firebaseUid.substring(0,5)}@example.com`, // Generate some email
       name: `User ${firebaseUid.substring(0,5)}`, // Generate some name
       goal: null,
-      heightM: undefined, 
+      heightM: undefined,
     };
     mockUser = newUser; // In a real app, you'd fetch or create in DB
     return simulateApiCall(newUser);
@@ -136,9 +136,23 @@ export const api = {
     }
     return simulateApiCall(plans);
   },
-  
+
   getWorkoutPlanById: async (planId: string): Promise<WorkoutPlan | undefined> => {
     return simulateApiCall(mockWorkoutPlans.find(p => p.id === planId));
+  },
+
+  addWorkoutPlan: async (planData: Omit<WorkoutPlan, 'id' | 'exercises'> & { exercises: Omit<WorkoutExercise, 'id'>[] }): Promise<WorkoutPlan> => {
+    const newPlan: WorkoutPlan = {
+      ...planData,
+      id: `plan-ai-${Date.now()}`,
+      exercises: planData.exercises.map((ex, index) => ({
+        ...ex,
+        id: `ex-ai-${Date.now()}-${index}`,
+      })),
+      tags: [...(planData.tags || []), 'ai-generated'],
+    };
+    mockWorkoutPlans.push(newPlan);
+    return simulateApiCall(newPlan);
   },
 
   getTodaysWorkout: async (userId: string): Promise<WorkoutPlan | null> => {
@@ -187,4 +201,3 @@ export const api = {
     return simulateApiCall(mockWeightLogs.filter(wl => wl.userId === userId).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   },
 };
-

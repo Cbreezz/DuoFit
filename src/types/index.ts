@@ -7,13 +7,13 @@ export interface UserProfile {
   displayName: string | null;
   photoURL?: string | null;
   goal?: 'lose_weight' | 'gain_mass';
-  heightM?: number; 
+  heightM?: number;
 }
 
 export interface WorkoutExercise {
   id: string;
   name: string;
-  sets: number;
+  sets: string; // Changed from number to string
   reps: string; // e.g., "8-12" or "15"
   restTime?: string; // e.g., "60s"
 }
@@ -29,7 +29,6 @@ export interface WorkoutPlan {
   type: WorkoutEquipmentType;
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
-  imageUrl?: string; // Made optional
   tags?: string[];
 }
 
@@ -55,7 +54,7 @@ export interface BackendUser {
   email: string;
   name: string;
   goal: FitnessGoal | null;
-  heightM?: number; 
+  heightM?: number;
 }
 
 // Mock API response types
@@ -108,4 +107,3 @@ export interface AIWorkoutFormValues {
   gender: AIGender | "any_gender"; // Added gender, "any_gender" for form's "AI Decides"
   specificRequests?: string;
 }
-

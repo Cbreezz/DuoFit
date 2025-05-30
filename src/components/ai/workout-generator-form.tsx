@@ -18,10 +18,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, AlertTriangle, Wand2, User } from "lucide-react"; // Added User icon
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Sparkles, AlertTriangle, Wand2, User, Save } from "lucide-react"; // Added User, Save icons
 import { generateWorkoutPlan } from "@/ai/flows/generate-workout-flow";
-import type { GenerateWorkoutInput, AIGeneratedWorkoutPlan, FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIGender, AIWorkoutFormValues } from "@/types";
+import type { GenerateWorkoutInput, AIGeneratedWorkoutPlan, FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIGender, AIWorkoutFormValues, WorkoutPlan, WorkoutExercise } from "@/types";
+import { api } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const workoutFormSchema = z.object({
   durationMinutes: z.coerce.number()
@@ -38,8 +40,11 @@ const workoutFormSchema = z.object({
 
 export function WorkoutGeneratorForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedPlan, setGeneratedPlan] = useState<AIGeneratedWorkoutPlan | null>(null);
+  const [isPlanSaved, setIsPlanSaved] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<AIWorkoutFormValues>({
     resolver: zodResolver(workoutFormSchema),
@@ -58,6 +63,7 @@ export function WorkoutGeneratorForm() {
     setIsLoading(true);
     setError(null);
     setGeneratedPlan(null);
+    setIsPlanSaved(false); // Reset save state on new generation
 
     const inputForAI: GenerateWorkoutInput = {
       ...values,
@@ -75,6 +81,45 @@ export function WorkoutGeneratorForm() {
       setIsLoading(false);
     }
   }
+
+  const handleSaveWorkout = async () => {
+    if (!generatedPlan) return;
+    setIsSaving(true);
+    try {
+      // Transform AIGeneratedWorkoutPlan to a structure compatible with addWorkoutPlan
+      const planToSave: Omit<WorkoutPlan, 'id' | 'exercises'> & { exercises: Omit<WorkoutExercise, 'id'>[] } = {
+        name: generatedPlan.name,
+        description: generatedPlan.description,
+        goal: generatedPlan.goal,
+        // Map equipmentUsed (AI type) to type (WorkoutPlan type)
+        type: generatedPlan.equipmentUsed === 'full_gym' || generatedPlan.equipmentUsed === 'basic_dumbbells_kettlebells' ? 'with_equipment' : 'no_equipment',
+        duration: generatedPlan.estimatedDuration,
+        exercises: generatedPlan.exercises.map(ex => ({
+          name: ex.name,
+          sets: ex.sets,
+          reps: ex.reps,
+          restTime: ex.restTime,
+        })),
+        tags: ['ai-generated', generatedPlan.muscleFocus.toLowerCase(), generatedPlan.goal],
+      };
+
+      await api.addWorkoutPlan(planToSave);
+      toast({
+        title: "Workout Saved!",
+        description: `"${generatedPlan.name}" has been added to your workout plans.`,
+      });
+      setIsPlanSaved(true);
+    } catch (e) {
+      console.error("Failed to save workout plan:", e);
+      toast({
+        title: "Save Failed",
+        description: "Could not save the workout plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -245,8 +290,8 @@ export function WorkoutGeneratorForm() {
           </CardHeader>
           <CardContent>
             <p className="text-destructive-foreground">{error}</p>
-            <Button variant="outline" onClick={() => setError(null)} className="mt-4">
-              Try Again
+            <Button variant="outline" onClick={() => { setError(null); form.requestSubmit(); }} className="mt-4">
+              Retry Generation
             </Button>
           </CardContent>
         </Card>
@@ -285,11 +330,22 @@ export function WorkoutGeneratorForm() {
               </>
             )}
           </CardContent>
-          {/* <CardFooter>
-            <Button className="w-full md:w-auto">
-              Save this Workout (Future Feature)
+          <CardFooter>
+            <Button 
+              onClick={handleSaveWorkout} 
+              className="w-full md:w-auto" 
+              disabled={isSaving || isPlanSaved}
+            >
+              {isSaving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : isPlanSaved ? (
+                <Sparkles className="mr-2 h-4 w-4 text-green-400" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              {isPlanSaved ? 'Workout Saved!' : 'Save this Workout'}
             </Button>
-          </CardFooter> */}
+          </CardFooter>
         </Card>
       )}
     </div>
