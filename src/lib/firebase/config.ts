@@ -1,13 +1,17 @@
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
 
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+// import { getAnalytics } from "firebase/analytics"; // Analytics can be added if needed later
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "YOUR_APP_ID",
+  apiKey: "AIzaSyA3yukeOxkyaFRKofrvekQ7umUXFo3OYL4",
+  authDomain: "duofit-b5500.firebaseapp.com",
+  projectId: "duofit-b5500",
+  storageBucket: "duofit-b5500.appspot.com", // Corrected from firebasestorage.app to appspot.com as per standard
+  messagingSenderId: "270157652113",
+  appId: "1:270157652113:web:b7b08e7e89a1e69090df30",
+  measurementId: "G-XW0QGMLJGL"
 };
 
 let app: FirebaseApp;
@@ -18,5 +22,6 @@ if (!getApps().length) {
 }
 
 const auth: Auth = getAuth(app);
+// const analytics = getAnalytics(app); // Initialize analytics if you plan to use it
 
 export { app, auth };
