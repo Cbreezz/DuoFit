@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,66 +12,87 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { FitnessGoal } from "@/types";
+import type { FitnessGoal, BackendUser } from "@/types";
 import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
-import { Loader2, Target } from "lucide-react";
+import { Loader2, Target, Ruler } from "lucide-react";
 
-const goalSchema = z.object({
+const profileSchema = z.object({
   goal: z.enum(["lose_weight", "gain_mass"], {
     required_error: "You need to select a fitness goal.",
   }),
+  heightM: z.preprocess(
+    (val) => (String(val).trim() === "" ? undefined : parseFloat(String(val))),
+    z.number().positive({ message: "Height must be a positive number." }).optional()
+  ),
 });
 
-type GoalFormValues = z.infer<typeof goalSchema>;
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface GoalSelectionFormProps {
-  currentGoal: FitnessGoal | null | undefined; // Undefined while loading
-  onGoalUpdated: (newGoal: FitnessGoal) => void;
+  currentUser: BackendUser | null;
+  onProfileUpdated: (updatedProfile: Partial<BackendUser>) => void;
 }
 
-export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionFormProps) {
+export function GoalSelectionForm({ currentUser, onProfileUpdated }: GoalSelectionFormProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<GoalFormValues>({
-    resolver: zodResolver(goalSchema),
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
-      goal: currentGoal || undefined,
+      goal: currentUser?.goal || undefined,
+      heightM: currentUser?.heightM || undefined,
     },
   });
 
   useEffect(() => {
-    if (currentGoal) {
-      form.reset({ goal: currentGoal });
+    if (currentUser) {
+      form.reset({ 
+        goal: currentUser.goal || undefined,
+        heightM: currentUser.heightM || undefined,
+      });
     }
-  }, [currentGoal, form]);
+  }, [currentUser, form]);
 
-  async function onSubmit(values: GoalFormValues) {
+  async function onSubmit(values: ProfileFormValues) {
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
     setIsLoading(true);
     try {
-      // Assume user.uid can be used as userId for the backend call
-      await api.updateUserGoal(user.uid, values.goal as FitnessGoal);
+      const updatedProfileData: Partial<BackendUser> = { 
+        goal: values.goal as FitnessGoal,
+      };
+      if (values.heightM) {
+        updatedProfileData.heightM = values.heightM;
+      }
+
+      await api.updateUserProfile(user.uid, updatedProfileData);
+      
+      let toastDescription = `Your fitness goal has been set to ${values.goal === 'lose_weight' ? 'Lose Weight' : 'Gain Mass'}.`;
+      if (values.heightM) {
+        toastDescription += ` Your height is set to ${values.heightM}m.`;
+      }
       toast({
-        title: "Goal Updated!",
-        description: `Your fitness goal has been set to ${values.goal === 'lose_weight' ? 'Lose Weight' : 'Gain Mass'}.`,
+        title: "Profile Updated!",
+        description: toastDescription,
       });
-      onGoalUpdated(values.goal as FitnessGoal);
+      onProfileUpdated(updatedProfileData);
     } catch (error) {
-      console.error("Failed to update goal:", error);
+      console.error("Failed to update profile:", error);
       toast({
         title: "Update Failed",
-        description: "Could not update your goal. Please try again.",
+        description: "Could not update your profile. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -82,9 +104,9 @@ export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionF
     <Card className="w-full max-w-lg mx-auto shadow-xl">
       <CardHeader className="text-center">
         <Target className="mx-auto h-12 w-12 text-primary mb-2" />
-        <CardTitle className="text-2xl">What&apos;s Your Fitness Goal?</CardTitle>
+        <CardTitle className="text-2xl">Your Fitness Profile</CardTitle>
         <CardDescription>
-          Select your primary goal. This will help us recommend suitable workout plans.
+          Select your primary goal and enter your height for BMI calculation.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,17 +117,18 @@ export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionF
               name="goal"
               render={({ field }) => (
                 <FormItem className="space-y-3">
+                  <FormLabel className="text-lg font-semibold text-center block">Fitness Goal</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                       className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 items-center justify-center"
                     >
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="lose_weight" id="lose_weight" />
                         </FormControl>
-                        <FormLabel htmlFor="lose_weight" className="font-semibold text-lg p-4 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
+                        <FormLabel htmlFor="lose_weight" className="font-semibold text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
                           Lose Weight
                         </FormLabel>
                       </FormItem>
@@ -113,7 +136,7 @@ export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionF
                         <FormControl>
                           <RadioGroupItem value="gain_mass" id="gain_mass" />
                         </FormControl>
-                        <FormLabel htmlFor="gain_mass" className="font-semibold text-lg p-4 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
+                        <FormLabel htmlFor="gain_mass" className="font-semibold text-base p-3 border rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground flex-1 text-center min-w-[150px]">
                           Gain Mass
                         </FormLabel>
                       </FormItem>
@@ -123,9 +146,37 @@ export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionF
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="heightM"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="heightM" className="text-lg font-semibold flex items-center">
+                    <Ruler className="mr-2 h-5 w-5 text-primary" /> Height (meters)
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      id="heightM"
+                      type="number" 
+                      placeholder="e.g., 1.75" 
+                      {...field} 
+                      step="0.01"
+                      onChange={event => field.onChange(event.target.value === '' ? undefined : parseFloat(event.target.value))}
+                      value={field.value ?? ''} 
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Used for calculating your BMI.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {currentGoal ? 'Update Goal' : 'Set Goal'}
+              {currentUser?.goal || currentUser?.heightM ? 'Update Profile' : 'Set Profile'}
             </Button>
           </form>
         </Form>
@@ -133,3 +184,4 @@ export function GoalSelectionForm({ currentGoal, onGoalUpdated }: GoalSelectionF
     </Card>
   );
 }
+

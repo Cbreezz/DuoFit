@@ -7,6 +7,7 @@ export interface UserProfile {
   displayName: string | null;
   photoURL?: string | null;
   goal?: 'lose_weight' | 'gain_mass';
+  heightM?: number; // Added for BMI calculation
 }
 
 export interface WorkoutExercise {
@@ -28,7 +29,7 @@ export interface WorkoutPlan {
   type: WorkoutEquipmentType;
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
-  imageUrl?: string; // Made optional
+  imageUrl?: string;
   tags?: string[];
 }
 
@@ -38,6 +39,8 @@ export interface CompletedWorkout {
   workoutPlanId: string;
   dateCompleted: string; // ISO Date string
   notes?: string;
+  // For detailed logging, we might expand this or use a separate type
+  // completedExercises?: Record<string, boolean>; // Example for future
 }
 
 export interface WeightLog {
@@ -61,5 +64,7 @@ export interface BackendUser {
   email: string;
   name: string;
   goal: FitnessGoal | null;
+  heightM?: number; // Added for BMI calculation
   // other profile fields
 }
+

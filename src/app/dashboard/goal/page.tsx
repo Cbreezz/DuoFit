@@ -1,3 +1,4 @@
+
 "use client";
 
 import { GoalSelectionForm } from "@/components/goal/goal-selection-form";
@@ -32,14 +33,15 @@ export default function GoalPage() {
     }
   }, [authLoading, fetchUserProfile]);
 
-  const handleGoalUpdated = (newGoal: FitnessGoal) => {
-    setBackendUser(prev => prev ? { ...prev, goal: newGoal } : null);
-    // Optionally, could re-fetch profile to confirm, but optimistic update is fine here.
+  const handleProfileUpdated = (updatedProfileFields: Partial<BackendUser>) => {
+    setBackendUser(prev => prev ? { ...prev, ...updatedProfileFields } : null);
+    // Re-fetch to confirm, or rely on optimistic update.
+    // fetchUserProfile(); // Could re-fetch, but optimistic is often enough.
   };
 
   if (authLoading || isLoading) {
     return (
-      <div className="flex h-[calc(100vh-var(--header-height,4rem))] items-center justify-center"> {/* Adjust height based on actual header */}
+      <div className="flex h-[calc(100vh-var(--header-height,4rem))] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -48,9 +50,10 @@ export default function GoalPage() {
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <GoalSelectionForm 
-        currentGoal={backendUser?.goal} 
-        onGoalUpdated={handleGoalUpdated} 
+        currentUser={backendUser} 
+        onProfileUpdated={handleProfileUpdated} 
       />
     </div>
   );
 }
+

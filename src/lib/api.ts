@@ -11,6 +11,7 @@ let mockUser: BackendUser = {
   email: 'testuser@duofit.app',
   name: 'Alex Doe',
   goal: null,
+  heightM: undefined, // Initialize height
 };
 
 let mockWorkoutPlans: WorkoutPlan[] = [
@@ -83,9 +84,9 @@ let mockCompletedWorkouts: CompletedWorkout[] = [
     { id: 'cw2', userId: 'user123', workoutPlanId: 'plan3', dateCompleted: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0] }, // 5 days ago
 ];
 let mockWeightLogs: WeightLog[] = [
-    { id: 'wl1', userId: 'user123', date: new Date(Date.now() - 86400000 * 30).toISOString().split('T')[0], weightKg: 70, bmi: 22.5 },
-    { id: 'wl2', userId: 'user123', date: new Date(Date.now() - 86400000 * 15).toISOString().split('T')[0], weightKg: 69, bmi: 22.2 },
-    { id: 'wl3', userId: 'user123', date: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0], weightKg: 68.5, bmi: 22.0 },
+    { id: 'wl1', userId: 'user123', date: new Date(Date.now() - 86400000 * 30).toISOString().split('T')[0], weightKg: 70, bmi: mockUser.heightM ? parseFloat((70 / (mockUser.heightM * mockUser.heightM)).toFixed(1)) : undefined },
+    { id: 'wl2', userId: 'user123', date: new Date(Date.now() - 86400000 * 15).toISOString().split('T')[0], weightKg: 69, bmi: mockUser.heightM ? parseFloat((69 / (mockUser.heightM * mockUser.heightM)).toFixed(1)) : undefined },
+    { id: 'wl3', userId: 'user123', date: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0], weightKg: 68.5, bmi: mockUser.heightM ? parseFloat((68.5 / (mockUser.heightM * mockUser.heightM)).toFixed(1)) : undefined },
 ];
 
 // Simulate API calls
@@ -95,22 +96,33 @@ const simulateApiCall = <T>(data: T): Promise<T> => {
 
 export const api = {
   getUserProfile: async (firebaseUid: string): Promise<BackendUser | null> => {
+    // Simulate finding or creating a user profile
     if (mockUser.firebaseUid === firebaseUid) {
       return simulateApiCall(mockUser);
     }
+    // For demo, if different firebaseUid, create/update mockUser
     const newUser: BackendUser = {
       id: `backend-${firebaseUid.substring(0,5)}`,
       firebaseUid,
-      email: `new-${firebaseUid.substring(0,5)}@example.com`,
-      name: `User ${firebaseUid.substring(0,5)}`,
-      goal: null
+      email: `user-${firebaseUid.substring(0,5)}@example.com`, // Generate some email
+      name: `User ${firebaseUid.substring(0,5)}`, // Generate some name
+      goal: null,
+      heightM: undefined, 
     };
-    mockUser = newUser; 
+    mockUser = newUser; // In a real app, you'd fetch or create in DB
     return simulateApiCall(newUser);
   },
 
-  updateUserGoal: async (userId: string, goal: FitnessGoal): Promise<BackendUser> => {
-    mockUser.goal = goal;
+  updateUserProfile: async (userId: string, profileData: Partial<Pick<BackendUser, 'goal' | 'heightM'>>): Promise<BackendUser> => {
+    // Assuming userId corresponds to mockUser.id for simplicity in mock
+    if (mockUser.id === userId || mockUser.firebaseUid === userId) { // Allow update by firebaseUid too
+        if (profileData.goal !== undefined) {
+            mockUser.goal = profileData.goal;
+        }
+        if (profileData.heightM !== undefined) {
+            mockUser.heightM = profileData.heightM;
+        }
+    }
     return simulateApiCall({ ...mockUser });
   },
 
@@ -155,8 +167,9 @@ export const api = {
 
   logWeight: async (userId: string, weightKg: number, date: string, heightM?: number): Promise<WeightLog> => {
     let bmi;
-    if (heightM && heightM > 0) {
-      bmi = parseFloat((weightKg / (heightM * heightM)).toFixed(1));
+    const effectiveHeight = heightM ?? mockUser.heightM; // Use provided height, fallback to profile height
+    if (effectiveHeight && effectiveHeight > 0) {
+      bmi = parseFloat((weightKg / (effectiveHeight * effectiveHeight)).toFixed(1));
     }
     const newLog: WeightLog = {
       id: `wl${Date.now()}`,
@@ -174,3 +187,4 @@ export const api = {
     return simulateApiCall(mockWeightLogs.filter(wl => wl.userId === userId).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   },
 };
+
