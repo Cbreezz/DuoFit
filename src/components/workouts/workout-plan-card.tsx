@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Routes } from "@/config/routes";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Dumbbell, Zap } from "lucide-react"; // Zap for no equipment
+import { Clock, Dumbbell, Zap } from "lucide-react";
 
 interface WorkoutPlanCardProps {
   plan: WorkoutPlan;
@@ -13,7 +13,7 @@ interface WorkoutPlanCardProps {
 
 export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl mb-1">{plan.name}</CardTitle>
         <CardDescription className="line-clamp-2 h-[2.5em]">{plan.description}</CardDescription>
@@ -24,8 +24,8 @@ export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
                 {plan.goal.replace('_', ' ')}
             </Badge>
             <Badge variant="outline" className="capitalize">
-                {plan.type === 'no_equipment' ? 
-                    <Zap className="mr-1 h-3 w-3" /> : 
+                {plan.type === 'no_equipment' ?
+                    <Zap className="mr-1 h-3 w-3" /> :
                     <Dumbbell className="mr-1 h-3 w-3" /> }
                 {plan.type.replace('_', ' ')}
             </Badge>
