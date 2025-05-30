@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { User } from 'firebase/auth';
@@ -22,8 +23,10 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -31,9 +34,17 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
+  // If not mounted yet, or auth is still loading, show loader.
+  // This ensures the initial client render matches the server.
+  if (!mounted || loading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-background">
+      <div 
+        className="flex h-screen w-screen items-center justify-center bg-background"
+        // Adding suppressHydrationWarning here can be a secondary measure 
+        // if style differences due to theme on bg-background cause issues,
+        // but the primary fix is ensuring consistent structure via `mounted` state.
+        // suppressHydrationWarning 
+      >
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -47,3 +58,4 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     </AuthContext.Provider>
   );
 };
+
