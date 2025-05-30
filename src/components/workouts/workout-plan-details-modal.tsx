@@ -13,7 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { WorkoutPlan } from "@/types";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Barbell, Zap, Repeat, ShieldQuestion, ListChecks, X } from "lucide-react";
+import { Clock, Dumbbell, Zap, Repeat, ShieldQuestion, ListChecks, X } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface WorkoutPlanDetailsModalProps {
@@ -51,7 +51,7 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange }: WorkoutP
                 <Badge variant="outline" className="capitalize text-sm py-1 px-2">
                     {plan.type === 'no_equipment' ? 
                         <Zap className="mr-1.5 h-4 w-4" /> : 
-                        <Barbell className="mr-1.5 h-4 w-4" /> }
+                        <Dumbbell className="mr-1.5 h-4 w-4" /> }
                     {plan.type.replace('_', ' ')}
                 </Badge>
                 <Badge variant="outline" className="text-sm py-1 px-2">
