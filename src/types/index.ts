@@ -7,7 +7,7 @@ export interface UserProfile {
   displayName: string | null;
   photoURL?: string | null;
   goal?: 'lose_weight' | 'gain_mass';
-  heightM?: number; // Added for BMI calculation
+  heightM?: number; 
 }
 
 export interface WorkoutExercise {
@@ -39,8 +39,6 @@ export interface CompletedWorkout {
   workoutPlanId: string;
   dateCompleted: string; // ISO Date string
   notes?: string;
-  // For detailed logging, we might expand this or use a separate type
-  // completedExercises?: Record<string, boolean>; // Example for future
 }
 
 export interface WeightLog {
@@ -51,20 +49,59 @@ export interface WeightLog {
   bmi?: number; // Calculated or logged
 }
 
-// Mock API response types
-export interface ApiResponse<T> {
-  data: T;
-  error?: string;
-}
-
-// Mock user data structure from backend
 export interface BackendUser {
   id: string;
   firebaseUid: string;
   email: string;
   name: string;
   goal: FitnessGoal | null;
-  heightM?: number; // Added for BMI calculation
-  // other profile fields
+  heightM?: number; 
 }
 
+// Mock API response types
+export interface ApiResponse<T> {
+  data: T;
+  error?: string;
+}
+
+
+// --- AI Workout Generation Types ---
+export type AIWorkoutEquipmentPreference = "none" | "basic_dumbbells_kettlebells" | "full_gym";
+export type AIWorkoutIntensity = "low" | "medium" | "high";
+
+export interface GenerateWorkoutInput {
+  durationMinutes: number;
+  goal: FitnessGoal;
+  equipment: AIWorkoutEquipmentPreference;
+  muscleFocus: string;
+  intensity?: AIWorkoutIntensity;
+  specificRequests?: string;
+}
+
+export interface AIGeneratedExercise {
+  name: string;
+  sets: string; // e.g., "3", "3-4"
+  reps: string; // e.g., "8-12", "AMRAP", "30 seconds"
+  restTime?: string; // e.g., "60s", "None if circuit"
+}
+
+export interface AIGeneratedWorkoutPlan {
+  name: string;
+  description: string;
+  estimatedDuration: string; // e.g., "Approx. 45 minutes"
+  goal: FitnessGoal;
+  equipmentUsed: AIWorkoutEquipmentPreference;
+  muscleFocus: string;
+  exercises: AIGeneratedExercise[];
+  notes?: string; // Additional tips, warm-up/cool-down
+}
+
+// For form validation, compatible with GenerateWorkoutInput
+export interface AIWorkoutFormValues {
+  durationMinutes: number;
+  goal: FitnessGoal;
+  equipment: AIWorkoutEquipmentPreference;
+  muscleFocus: string;
+  intensity: AIWorkoutIntensity | "any"; // "any" for optional in form
+  specificRequests?: string;
+}
