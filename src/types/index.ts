@@ -14,8 +14,8 @@ export interface UserProfile {
 export interface WorkoutExercise {
   id: string;
   name: string;
-  sets: string;
-  reps: string; // e.g., "8-12" or "15"
+  sets: string; // e.g., "3", "3-4", "AMRAP" - This is the target sets
+  reps: string; // e.g., "8-12" or "15" - This is the target reps
   restTime?: string; // e.g., "60s"
 }
 
@@ -31,8 +31,8 @@ export interface WorkoutPlan {
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
   tags?: string[];
-  isCustom?: boolean; // Added for custom plans
-  createdByUserId?: string; // Added for custom plans
+  isCustom?: boolean;
+  createdByUserId?: string;
 }
 
 export interface CompletedWorkout {
@@ -59,6 +59,34 @@ export interface BackendUser {
   goal: FitnessGoal | null;
   heightM?: number;
 }
+
+// --- PR Tracking & Detailed Logging Types ---
+export interface LoggedExercisePerformance {
+  id: string;
+  userId: string;
+  exerciseId: string; // Corresponds to WorkoutExercise.id from the plan
+  exerciseName: string;
+  workoutPlanId?: string; // Optional: if logged as part of a specific plan
+  dateLogged: string; // ISO Date string "YYYY-MM-DD"
+  weightKg: number;
+  reps: number;
+  // We could add sets here, e.g. setsPerformed: number, but for PR tracking usually one best set is logged.
+  // For simplicity, we assume the logged weight/reps are for the primary tracked set.
+  isNewPR?: boolean; // To indicate if this performance set a new PR
+}
+
+export interface PersonalRecord {
+  id: string; // Could be composite like `userId_exerciseId` or `userId_exerciseNameNormalized`
+  userId: string;
+  exerciseId: string; // Refers to the WorkoutExercise.id for consistency
+  exerciseName: string; // Denormalized for easier display
+  bestWeightKg: number;
+  repsAtBestWeight: number;
+  dateAchieved: string; // ISO Date string "YYYY-MM-DD"
+  previousBestWeightKg?: number; // For comparison if needed
+  previousRepsAtBestWeight?: number;
+}
+
 
 // Mock API response types
 export interface ApiResponse<T> {
@@ -134,4 +162,3 @@ export const createWorkoutFormSchema = z.object({
 
 export type CreateWorkoutFormValues = z.infer<typeof createWorkoutFormSchema>;
 export type CustomExerciseFormValues = z.infer<typeof customExerciseSchema>;
-

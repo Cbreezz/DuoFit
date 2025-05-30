@@ -1,17 +1,17 @@
 
-import type { WorkoutPlan, FitnessGoal, WeightLog, CompletedWorkout, BackendUser, WorkoutEquipmentType, AIGeneratedWorkoutPlan, WorkoutExercise } from '@/types';
+import type { WorkoutPlan, FitnessGoal, WeightLog, CompletedWorkout, BackendUser, WorkoutEquipmentType, AIGeneratedWorkoutPlan, WorkoutExercise, LoggedExercisePerformance, PersonalRecord } from '@/types';
 
 // MOCK API - Replace with actual fetch calls to your backend
 
-const MOCK_DELAY = 500;
+const MOCK_DELAY = 300; // Reduced delay for quicker UI feedback
 
 let mockUser: BackendUser = {
   id: 'user123',
   firebaseUid: 'firebaseUser123',
   email: 'testuser@duofit.app',
   name: 'Alex Doe',
-  goal: null,
-  heightM: undefined, // Initialize height
+  goal: 'gain_mass',
+  heightM: 1.75,
 };
 
 let mockWorkoutPlans: WorkoutPlan[] = [
@@ -25,7 +25,7 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     exercises: [
       { id: 'ex1', name: 'Jumping Jacks', sets: "3", reps: '30-45 sec' },
       { id: 'ex2', name: 'Bodyweight Squats', sets: "3", reps: '15-20' },
-      { id: 'ex3', name: 'Push-ups (or Knee Push-ups)', sets: "3", reps: 'As many as possible (AMRAP)' },
+      { id: 'ex3', name: 'Push-ups (or Knee Push-ups)', sets: "3", reps: 'AMRAP' },
       { id: 'ex4', name: 'Lunges (alternating legs)', sets: "3", reps: '10-12 per leg' },
       { id: 'ex5', name: 'Plank', sets: "3", reps: '30-60 sec' },
     ],
@@ -42,50 +42,18 @@ let mockWorkoutPlans: WorkoutPlan[] = [
     exercises: [
       { id: 'ex6', name: 'Barbell Squats', sets: "4", reps: '8-10' },
       { id: 'ex7', name: 'Bench Press', sets: "4", reps: '8-10' },
-      { id: 'ex8', name: 'Deadlifts', sets: "1", reps: '5' }, // Or 3 sets of 5-8 reps
+      { id: 'ex8', name: 'Deadlifts', sets: "1", reps: '5' },
       { id: 'ex9', name: 'Overhead Press', sets: "3", reps: '10-12' },
       { id: 'ex10', name: 'Bent-over Rows', sets: "3", reps: '10-12' },
     ],
     tags: ['strength', 'muscle building', 'compound lifts'],
     isCustom: false,
   },
-  {
-    id: 'plan3',
-    name: 'Quick Cardio Burn (No Equipment)',
-    description: 'Get your heart rate up with this quick and effective cardio session.',
-    goal: 'lose_weight',
-    type: 'no_equipment',
-    duration: '20 minutes',
-    exercises: [
-        { id: 'ex11', name: 'High Knees', sets: "1", reps: '3 min' },
-        { id: 'ex12', name: 'Burpees', sets: "5", reps: '10' },
-        { id: 'ex13', name: 'Mountain Climbers', sets: "1", reps: '3 min' },
-    ],
-    tags: ['cardio', 'hiit', 'quick workout'],
-    isCustom: false,
-  },
-  {
-    id: 'plan4',
-    name: 'Upper Body Sculpt (With Equipment)',
-    description: 'Focus on sculpting your upper body muscles.',
-    goal: 'gain_mass',
-    type: 'with_equipment',
-    duration: '50 minutes',
-    exercises: [
-        { id: 'ex14', name: 'Pull-ups / Lat Pulldowns', sets: "3", reps: 'AMRAP / 10-12' },
-        { id: 'ex15', name: 'Dumbbell Bench Press', sets: "3", reps: '10-12' },
-        { id: 'ex16', name: 'Dumbbell Shoulder Press', sets: "3", reps: '10-12' },
-        { id: 'ex17', name: 'Bicep Curls', sets: "3", reps: '12-15' },
-        { id: 'ex18', name: 'Tricep Dips / Pushdowns', sets: "3", reps: '12-15' },
-    ],
-    tags: ['upper body', 'sculpting', 'gym'],
-    isCustom: false,
-  },
 ];
 
 let mockCompletedWorkouts: CompletedWorkout[] = [
-    { id: 'cw1', userId: 'user123', workoutPlanId: 'plan1', dateCompleted: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0] }, // 2 days ago
-    { id: 'cw2', userId: 'user123', workoutPlanId: 'plan3', dateCompleted: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0] }, // 5 days ago
+    { id: 'cw1', userId: 'user123', workoutPlanId: 'plan1', dateCompleted: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0] },
+    { id: 'cw2', userId: 'user123', workoutPlanId: 'plan2', dateCompleted: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0] },
 ];
 let mockWeightLogs: WeightLog[] = [
     { id: 'wl1', userId: 'user123', date: new Date(Date.now() - 86400000 * 30).toISOString().split('T')[0], weightKg: 70, bmi: mockUser.heightM ? parseFloat((70 / (mockUser.heightM * mockUser.heightM)).toFixed(1)) : undefined },
@@ -93,39 +61,41 @@ let mockWeightLogs: WeightLog[] = [
     { id: 'wl3', userId: 'user123', date: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0], weightKg: 68.5, bmi: mockUser.heightM ? parseFloat((68.5 / (mockUser.heightM * mockUser.heightM)).toFixed(1)) : undefined },
 ];
 
+let mockLoggedExercisePerformances: LoggedExercisePerformance[] = [];
+let mockPersonalRecords: PersonalRecord[] = [
+    // Example PR:
+    // { id: 'user123_ex6', userId: 'user123', exerciseId: 'ex6', exerciseName: 'Barbell Squats', bestWeightKg: 100, repsAtBestWeight: 5, dateAchieved: '2024-01-15'},
+];
+
+
 // Simulate API calls
 const simulateApiCall = <T>(data: T): Promise<T> => {
-  return new Promise((resolve) => setTimeout(() => resolve(data), MOCK_DELAY));
+  return new Promise((resolve) => setTimeout(() => resolve(JSON.parse(JSON.stringify(data))), MOCK_DELAY)); // Deep clone to avoid mutation issues with mock data
 };
 
 export const api = {
   getUserProfile: async (firebaseUid: string): Promise<BackendUser | null> => {
-    // Simulate finding or creating a user profile
     if (mockUser.firebaseUid === firebaseUid) {
       return simulateApiCall(mockUser);
     }
-    // For demo, if different firebaseUid, create/update mockUser
     const newUser: BackendUser = {
       id: `backend-${firebaseUid.substring(0,5)}`,
       firebaseUid,
-      email: `user-${firebaseUid.substring(0,5)}@example.com`, // Generate some email
-      name: `User ${firebaseUid.substring(0,5)}`, // Generate some name
+      email: `user-${firebaseUid.substring(0,5)}@example.com`,
+      name: `User ${firebaseUid.substring(0,5)}`,
       goal: null,
       heightM: undefined,
     };
-    mockUser = newUser; // In a real app, you'd fetch or create in DB
+    // In a real app, only one user would exist, but for mock, we update if different.
+    // For true multi-user mock, this would need more complex state.
+    // mockUser = newUser; 
     return simulateApiCall(newUser);
   },
 
   updateUserProfile: async (userId: string, profileData: Partial<Pick<BackendUser, 'goal' | 'heightM'>>): Promise<BackendUser> => {
-    // Assuming userId corresponds to mockUser.id for simplicity in mock
-    if (mockUser.id === userId || mockUser.firebaseUid === userId) { // Allow update by firebaseUid too
-        if (profileData.goal !== undefined) {
-            mockUser.goal = profileData.goal;
-        }
-        if (profileData.heightM !== undefined) {
-            mockUser.heightM = profileData.heightM;
-        }
+    if (mockUser.id === userId || mockUser.firebaseUid === userId) {
+        if (profileData.goal !== undefined) mockUser.goal = profileData.goal;
+        if (profileData.heightM !== undefined) mockUser.heightM = profileData.heightM;
     }
     return simulateApiCall({ ...mockUser });
   },
@@ -146,7 +116,7 @@ export const api = {
   },
 
   addWorkoutPlan: async (
-    planData: Omit<WorkoutPlan, 'id' | 'exercises'> & { exercises: Omit<WorkoutExercise, 'id'>[] },
+    planData: Omit<WorkoutPlan, 'id' | 'exercises' | 'isCustom' | 'createdByUserId'> & { exercises: Omit<WorkoutExercise, 'id'>[] } & Partial<Pick<WorkoutPlan, 'tags'>>,
     isCustom: boolean = false,
     createdByUserId?: string
   ): Promise<WorkoutPlan> => {
@@ -166,13 +136,11 @@ export const api = {
   },
 
   getTodaysWorkout: async (userId: string): Promise<WorkoutPlan | null> => {
-    const userGoal = mockUser.goal;
+    const userGoal = mockUser.goal; // Assuming mockUser is the current user for simplicity
     if (userGoal) {
-      // Prefer non-custom plans for "Today's Workout" unless that's all the user has or a specific logic is added.
       const plan = mockWorkoutPlans.find(p => p.goal === userGoal && !p.isCustom);
       if (plan) return simulateApiCall(plan);
     }
-    // Fallback to any first plan if goal-specific not found, or if no goal.
     const nonCustomPlans = mockWorkoutPlans.filter(p => !p.isCustom);
     return simulateApiCall(nonCustomPlans[0] || mockWorkoutPlans[0] || null);
   },
@@ -194,7 +162,7 @@ export const api = {
 
   logWeight: async (userId: string, weightKg: number, date: string, heightM?: number): Promise<WeightLog> => {
     let bmi;
-    const effectiveHeight = heightM ?? mockUser.heightM; // Use provided height, fallback to profile height
+    const effectiveHeight = heightM ?? mockUser.heightM;
     if (effectiveHeight && effectiveHeight > 0) {
       bmi = parseFloat((weightKg / (effectiveHeight * effectiveHeight)).toFixed(1));
     }
@@ -213,4 +181,78 @@ export const api = {
   getWeightLogs: async (userId: string): Promise<WeightLog[]> => {
     return simulateApiCall(mockWeightLogs.filter(wl => wl.userId === userId).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   },
+
+  // --- PR Tracking API Functions ---
+
+  getPersonalRecord: async (userId: string, exerciseId: string): Promise<PersonalRecord | null> => {
+    const pr = mockPersonalRecords.find(p => p.userId === userId && p.exerciseId === exerciseId);
+    return simulateApiCall(pr || null);
+  },
+
+  updatePersonalRecord: async (userId: string, prData: Omit<PersonalRecord, 'id' | 'userId'>): Promise<PersonalRecord> => {
+    let prIndex = mockPersonalRecords.findIndex(p => p.userId === userId && p.exerciseId === prData.exerciseId);
+    const newPrEntry: PersonalRecord = {
+      ...prData,
+      id: `${userId}_${prData.exerciseId}`, // Consistent ID generation
+      userId,
+    };
+    if (prIndex !== -1) {
+      mockPersonalRecords[prIndex] = newPrEntry;
+    } else {
+      mockPersonalRecords.push(newPrEntry);
+    }
+    return simulateApiCall(newPrEntry);
+  },
+
+  logExercisePerformance: async (
+    userId: string, 
+    performanceData: Omit<LoggedExercisePerformance, 'id' | 'userId' | 'isNewPR'>
+  ): Promise<LoggedExercisePerformance> => {
+    const newPerformance: LoggedExercisePerformance = {
+      ...performanceData,
+      id: `lep-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      userId,
+      isNewPR: false, // Default to false
+    };
+    mockLoggedExercisePerformances.push(newPerformance);
+
+    // Check for PR
+    const currentPR = await api.getPersonalRecord(userId, performanceData.exerciseId);
+    let isNewPR = false;
+
+    if (!currentPR) {
+      isNewPR = true; // First time logging this exercise is always a PR
+    } else {
+      // PR Logic: Higher weight at same or more reps OR more reps at same or higher weight
+      if (performanceData.weightKg > currentPR.bestWeightKg && performanceData.reps >= currentPR.repsAtBestWeight) {
+        isNewPR = true;
+      } else if (performanceData.weightKg >= currentPR.bestWeightKg && performanceData.reps > currentPR.repsAtBestWeight) {
+        isNewPR = true;
+      }
+    }
+
+    if (isNewPR) {
+      newPerformance.isNewPR = true;
+      await api.updatePersonalRecord(userId, {
+        exerciseId: performanceData.exerciseId,
+        exerciseName: performanceData.exerciseName, // Ensure this is passed correctly
+        bestWeightKg: performanceData.weightKg,
+        repsAtBestWeight: performanceData.reps,
+        dateAchieved: performanceData.dateLogged,
+        previousBestWeightKg: currentPR?.bestWeightKg,
+        previousRepsAtBestWeight: currentPR?.repsAtBestWeight,
+      });
+    }
+    
+    return simulateApiCall(newPerformance);
+  },
+
+  getExercisePerformances: async (userId: string, exerciseId?: string): Promise<LoggedExercisePerformance[]> => {
+    let performances = mockLoggedExercisePerformances.filter(p => p.userId === userId);
+    if (exerciseId) {
+      performances = performances.filter(p => p.exerciseId === exerciseId);
+    }
+    performances.sort((a,b) => new Date(b.dateLogged).getTime() - new Date(a.dateLogged).getTime()); // Newest first
+    return simulateApiCall(performances);
+  }
 };
