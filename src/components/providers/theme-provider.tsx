@@ -31,36 +31,31 @@ export function ThemeProvider({
   defaultTheme = "light",
   storageKey = "duofit-theme",
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme); // Initialize with defaultTheme
+  const [theme, setThemeState] = useState<Theme>(defaultTheme);
 
-  // Effect 1: On client mount, read from localStorage and update theme state if needed.
-  // This runs after initial hydration.
+  // Runs once on the client after initial hydration to set theme from localStorage
   useEffect(() => {
-    let effectiveTheme = defaultTheme;
-    try {
-      const storedTheme = window.localStorage.getItem(storageKey) as Theme | null;
-      // Ensure storedTheme is a valid Theme value
-      if (storedTheme && (storedTheme === "light" || storedTheme === "dark")) {
-        effectiveTheme = storedTheme;
+    const storedTheme = typeof window !== 'undefined' ? window.localStorage.getItem(storageKey) as Theme | null : null;
+    if (storedTheme && (storedTheme === "light" || storedTheme === "dark")) {
+      setThemeState(storedTheme); // Update to stored theme
+    }
+    // If no stored theme, it remains `defaultTheme` from useState init
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]); // Only re-run if storageKey changes (which it likely won't)
+
+  // Runs whenever `theme` state changes to apply it to the DOM and localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(theme);
+      try {
+        window.localStorage.setItem(storageKey, theme);
+      } catch (e) {
+        console.error("Error saving theme to localStorage", e);
       }
-    } catch (e) {
-      console.error("Error reading theme from localStorage", e);
-      // Fallback to defaultTheme if localStorage access fails
     }
-    setThemeState(effectiveTheme);
-  }, [defaultTheme, storageKey]); // Dependencies ensure this runs once based on these props
-
-  // Effect 2: Apply theme to HTML and save to localStorage whenever theme state changes.
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    try {
-      window.localStorage.setItem(storageKey, theme);
-    } catch (e) {
-      console.error("Error saving theme to localStorage", e);
-    }
-  }, [theme, storageKey]); // Runs when theme or storageKey changes
+  }, [theme, storageKey]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
