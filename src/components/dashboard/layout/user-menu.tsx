@@ -15,18 +15,18 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { auth } from "@/lib/firebase/config";
 import { signOut } from "firebase/auth";
-import { LogOut, User as UserIcon, LayoutDashboard, Moon, Sun, Ruler } from "lucide-react"; // Added Moon, Sun, Ruler
+import { LogOut, User as UserIcon, LayoutDashboard, Moon, Sun, Ruler } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/config/routes";
 import { useToast } from "@/hooks/use-toast";
-import { useTheme } from "@/components/providers/theme-provider"; // Added
+import { useTheme } from "@/components/providers/theme-provider";
 
 export function UserMenu() {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const { theme, toggleTheme } = useTheme(); // Added
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -77,7 +77,7 @@ export function UserMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={Routes.goal}>
-              <Ruler className="mr-2 h-4 w-4" /> {/* Changed icon to Ruler for profile */}
+              <Ruler className="mr-2 h-4 w-4" />
               <span>My Profile</span>
             </Link>
           </DropdownMenuItem>
@@ -102,4 +102,3 @@ export function UserMenu() {
     </DropdownMenu>
   );
 }
-
