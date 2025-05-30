@@ -29,7 +29,7 @@ export interface WorkoutPlan {
   type: WorkoutEquipmentType;
   duration: string; // e.g., "4 weeks", "60 minutes"
   exercises: WorkoutExercise[];
-  imageUrl?: string;
+  imageUrl?: string; // Made optional
   tags?: string[];
 }
 
@@ -68,6 +68,7 @@ export interface ApiResponse<T> {
 // --- AI Workout Generation Types ---
 export type AIWorkoutEquipmentPreference = "none" | "basic_dumbbells_kettlebells" | "full_gym";
 export type AIWorkoutIntensity = "low" | "medium" | "high";
+export type AIGender = "male" | "female" | "prefer_not_to_say";
 
 export interface GenerateWorkoutInput {
   durationMinutes: number;
@@ -75,6 +76,7 @@ export interface GenerateWorkoutInput {
   equipment: AIWorkoutEquipmentPreference;
   muscleFocus: string;
   intensity?: AIWorkoutIntensity;
+  gender?: AIGender; // Added gender
   specificRequests?: string;
 }
 
@@ -103,5 +105,7 @@ export interface AIWorkoutFormValues {
   equipment: AIWorkoutEquipmentPreference;
   muscleFocus: string;
   intensity: AIWorkoutIntensity | "any"; // "any" for optional in form
+  gender: AIGender | "any_gender"; // Added gender, "any_gender" for form's "AI Decides"
   specificRequests?: string;
 }
+

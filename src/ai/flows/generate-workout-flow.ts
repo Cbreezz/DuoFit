@@ -10,7 +10,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import type { FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIGeneratedWorkoutPlan } from '@/types';
+import type { FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIGender, AIGeneratedWorkoutPlan } from '@/types';
 
 // Schemas for Zod validation and AI model guidance
 
@@ -32,6 +32,9 @@ const GenerateWorkoutInputSchema = z.object({
   intensity: z.enum(['low', 'medium', 'high'] as [AIWorkoutIntensity, ...AIWorkoutIntensity[]])
     .optional()
     .describe('Desired intensity level (low, medium, or high). Default to medium if not specified.'),
+  gender: z.enum(['male', 'female', 'prefer_not_to_say'] as [AIGender, ...AIGender[]])
+    .optional()
+    .describe('User gender, if specified. Tailor workout if "male" or "female". If "prefer_not_to_say" or unspecified, create a gender-neutral plan.'),
   specificRequests: z
     .string()
     .optional()
@@ -57,7 +60,7 @@ const GenerateWorkoutOutputSchema = z.object({
   equipmentUsed: z.enum(['none', 'basic_dumbbells_kettlebells', 'full_gym'] as [AIWorkoutEquipmentPreference, ...AIWorkoutEquipmentPreference[]])
     .describe("The type of equipment assumed for this workout, consistent with the input equipment level."),
   muscleFocus: z.string().describe("The primary muscle groups or focus of this workout, reflecting the user's input."),
-  exercises: z.array(AIGeneratedExerciseSchema).min(3,"Include at least 3 exercises.").describe("A list of exercises. Ensure exercises are appropriate for the specified equipment and goal."),
+  exercises: z.array(AIGeneratedExerciseSchema).min(3,"Include at least 3 exercises.").describe("A list of exercises. Ensure exercises are appropriate for the specified equipment, goal, and gender (if provided)."),
   notes: z.string().optional().describe("Optional: Include a brief warm-up (2-3 general dynamic stretches) and cool-down (2-3 static stretches) suggestion, or other general tips for the workout. Keep this concise."),
 });
 // This type is already defined in @/types as AIGeneratedWorkoutPlan, but Zod schema is needed here.
@@ -83,6 +86,15 @@ User Preferences:
 {{else}}
 - Desired Intensity: Medium (default)
 {{/if}}
+{{#if gender}}
+  {{#if (eq gender "prefer_not_to_say")}}
+- Gender: Not specified (create a gender-neutral plan or focus on general fitness)
+  {{else}}
+- Gender: {{gender}} (Tailor the workout plan to be suitable for a {{gender}} individual. Consider common physiological differences and fitness goals if appropriate, without stereotyping. For example, females might prefer more glute/leg focus or different rep ranges for certain exercises, while males might focus on upper body strength. If muscle focus is "full body", ensure a balanced approach suitable for the specified gender.)
+  {{/if}}
+{{else}}
+- Gender: Not specified (create a gender-neutral plan or focus on general fitness)
+{{/if}}
 {{#if specificRequests}}
 - Specific Requests: {{{specificRequests}}}
 {{/if}}
@@ -94,7 +106,7 @@ Workout Plan Details to Generate:
 - Goal Alignment: Confirm the workout goal matches the input.
 - Equipment Used: Confirm equipment matches input.
 - Muscle Focus: Confirm muscle focus matches input.
-- Exercises: A list of exercises with name, sets, reps, and optional rest time. Exercises should be appropriate for the equipment and goal. Provide at least 3 exercises.
+- Exercises: A list of exercises with name, sets, reps, and optional rest time. Exercises should be appropriate for the equipment, goal, and gender (if provided). Provide at least 3 exercises.
 - Notes: Suggest a brief warm-up and cool-down, or other relevant tips.
 
 Structure your response strictly according to the JSON output schema.
@@ -125,3 +137,4 @@ export async function generateWorkoutPlan(input: GenerateWorkoutInput): Promise<
   const result = await generateWorkoutPlanFlow(input);
   return result;
 }
+

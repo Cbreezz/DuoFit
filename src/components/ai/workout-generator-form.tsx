@@ -19,9 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, AlertTriangle, Wand2 } from "lucide-react";
+import { Loader2, Sparkles, AlertTriangle, Wand2, User } from "lucide-react"; // Added User icon
 import { generateWorkoutPlan } from "@/ai/flows/generate-workout-flow";
-import type { GenerateWorkoutInput, AIGeneratedWorkoutPlan, FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIWorkoutFormValues } from "@/types";
+import type { GenerateWorkoutInput, AIGeneratedWorkoutPlan, FitnessGoal, AIWorkoutEquipmentPreference, AIWorkoutIntensity, AIGender, AIWorkoutFormValues } from "@/types";
 
 const workoutFormSchema = z.object({
   durationMinutes: z.coerce.number()
@@ -31,6 +31,7 @@ const workoutFormSchema = z.object({
   equipment: z.enum(['none', 'basic_dumbbells_kettlebells', 'full_gym'] as [AIWorkoutEquipmentPreference, ...AIWorkoutEquipmentPreference[]]),
   muscleFocus: z.string().min(3, "Describe muscle focus, e.g., 'Full body'").max(100),
   intensity: z.enum(['any', 'low', 'medium', 'high'] as [AIWorkoutIntensity | 'any', ...(AIWorkoutIntensity | 'any')[]]),
+  gender: z.enum(['any_gender', 'male', 'female', 'prefer_not_to_say'] as [AIGender | 'any_gender', ...(AIGender | 'any_gender')[]]),
   specificRequests: z.string().max(300).optional(),
 });
 
@@ -48,6 +49,7 @@ export function WorkoutGeneratorForm() {
       equipment: "none",
       muscleFocus: "Full body",
       intensity: "medium",
+      gender: "any_gender",
       specificRequests: "",
     },
   });
@@ -60,6 +62,7 @@ export function WorkoutGeneratorForm() {
     const inputForAI: GenerateWorkoutInput = {
       ...values,
       intensity: values.intensity === "any" ? undefined : values.intensity,
+      gender: values.gender === "any_gender" ? undefined : values.gender as AIGender, // Cast as AIGender if not "any_gender"
     };
 
     try {
@@ -88,7 +91,7 @@ export function WorkoutGeneratorForm() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
                   name="durationMinutes"
@@ -162,6 +165,27 @@ export function WorkoutGeneratorForm() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center"><User className="mr-1 h-4 w-4 text-muted-foreground"/> Gender</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger><SelectValue placeholder="Select gender (optional)" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="any_gender">Any / AI Decides</SelectItem>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="prefer_not_to_say">Prefer Not to Say</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <FormField
                 control={form.control}
@@ -170,7 +194,7 @@ export function WorkoutGeneratorForm() {
                   <FormItem>
                     <FormLabel>Muscle Focus / Workout Type</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Full body, Upper body, HIIT, Cardio" {...field} />
+                      <Input placeholder="e.g., Full body, Upper body, HIIT, Cardio, Legs & Glutes" {...field} />
                     </FormControl>
                      <FormDescription>Describe the main focus or type of workout.</FormDescription>
                     <FormMessage />
@@ -270,3 +294,4 @@ export function WorkoutGeneratorForm() {
     </div>
   );
 }
+
