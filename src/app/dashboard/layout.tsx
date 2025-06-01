@@ -41,7 +41,7 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen flex-col md:flex-row">
+      <div className="flex min-h-screen w-full">
         <Sidebar collapsible="icon" className="border-r bg-sidebar text-sidebar-foreground">
           <SidebarHeader className="p-2 flex items-center justify-center md:justify-start">
             <Link href={Routes.home} className="flex items-center gap-2 p-2 font-semibold">
@@ -52,11 +52,10 @@ export default function DashboardLayout({
           <SidebarContent>
             <SidebarNav />
           </SidebarContent>
-          {/* Optional: <SidebarFooter>...</SidebarFooter> */}
         </Sidebar>
-        <SidebarInset className="flex-1 flex flex-col overflow-hidden">
+        <SidebarInset className="flex-1 flex flex-col overflow-hidden w-full">
           <MainHeader />
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-background">
+          <main className="flex-1 overflow-y-auto p-2 sm:p-4 md:p-6 lg:p-8 bg-background w-full">
             {children}
           </main>
         </SidebarInset>

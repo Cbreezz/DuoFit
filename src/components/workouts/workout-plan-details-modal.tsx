@@ -240,6 +240,8 @@ export function WorkoutPlanDetailsModal({ plan, isOpen, onOpenChange, onSessionL
 
 // Helper FormItem component if not using react-hook-form's FormField here
 // For simplicity, direct Label and Input are used above.
+import { cn } from "@/lib/utils";
+
 const FormItem: React.FC<{children: ReactNode, className?: string}> = ({children, className}) => (
   <div className={cn("space-y-1", className)}>{children}</div>
 );
