@@ -101,9 +101,3 @@ prisma/
 ├── schema.prisma         User, workout, goal, exercise, and progress models
 └── migrations/           Prisma database migrations
 ```
-
-
-## Repository
-
-DuoFit is maintained in the `Cbreezz/DuoFit` repository.
-"}]} सहाय. Need validate build/typecheck maybe npm scripts. Use Bash. Also SyncGit required after file change and branch? Need create branch from master. SyncGit can branchName e.g. v0/audit-readme, commit. But before maybe validate. Use parallel bash build/typecheck? independent, yes.”】【 to=multi_tool_use.parallel.parallel  (commentary)  codeҭеи 广益json(signal) waswo期特码>{
