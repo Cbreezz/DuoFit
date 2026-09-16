@@ -102,22 +102,6 @@ prisma/
 └── migrations/           Prisma database migrations
 ```
 
-## Audit notes
-
-The application currently presents a focused, responsive authentication experience at the root entry point and routes authenticated users into the dashboard. The main product areas are represented in the dashboard navigation and share a consistent component system.
-
-Before production deployment, review the following items:
-
-- Replace hard-coded Firebase client configuration with environment variables.
-- Configure and verify Firebase authorized domains and the Google sign-in provider.
-- Use a managed production database instead of the checked-in SQLite database.
-- Keep the Google AI credential server-side and configure production secrets through the deployment platform.
-- Add automated tests for authentication, workout mutations, authorization boundaries, and AI generation failures.
-- Verify that every API query scopes workout, goal, and progress data to the authenticated user.
-
-## License
-
-No license has been specified for this project yet.
 
 ## Repository
 
